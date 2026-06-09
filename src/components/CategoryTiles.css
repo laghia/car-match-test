@@ -2,6 +2,13 @@
   padding: 16px 0 48px;
 }
 
+@media (min-width: 1200px) {
+  .category-tiles .container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
 .category-tiles__heading {
   font-size: 20px;
   font-weight: 600;

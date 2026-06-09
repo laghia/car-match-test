@@ -10,7 +10,7 @@
   gap: 16px;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 16px max(24px, calc((100vw - 1440px) / 2 + var(--page-gutter)));
+  padding: 16px 64px;
 }
 
 .car-details-subnav__breadcrumb {
@@ -70,6 +70,20 @@
 
 .car-details-subnav__shortlist:hover {
   opacity: 0.85;
+}
+
+@media (max-width: 979px) {
+  .car-details-subnav__inner {
+    padding-left: 44px;
+    padding-right: 44px;
+  }
+}
+
+@media (max-width: 779px) {
+  .car-details-subnav__inner {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
 }
 
 @media (max-width: 767px) {

@@ -10,7 +10,7 @@
   align-items: center;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 32px max(24px, calc((100vw - 1440px) / 2 + var(--page-gutter))) 64px;
+  padding: 32px 64px 64px;
 }
 
 .related-cars__header {
@@ -42,6 +42,19 @@
 .related-cars__cta-link {
   display: inline-flex;
   text-decoration: none;
+}
+
+@media (max-width: 979px) {
+  .related-cars__inner {
+    padding-left: 44px;
+    padding-right: 44px;
+  }
+}
+
+@media (max-width: 779px) {
+  .related-cars__inner {
+    padding: 32px 32px 48px;
+  }
 }
 
 @media (max-width: 767px) {

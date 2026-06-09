@@ -1,6 +1,13 @@
 .award-banner {
   padding: 48px 0;
-  background: linear-gradient(135deg, var(--accent-blue-light) 0%, #f0f6ff 100%);
+  background: #ffffff;
+}
+
+@media (min-width: 1200px) {
+  .award-banner .container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
 }
 
 .award-banner__inner {

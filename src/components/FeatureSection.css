@@ -9,6 +9,13 @@
   padding: 48px 0 64px;
 }
 
+@media (min-width: 1200px) {
+  .feature-section .container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
 .feature-section__curve {
   position: absolute;
   bottom: 0;

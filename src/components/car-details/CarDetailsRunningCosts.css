@@ -8,9 +8,10 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  max-width: 822px;
+  width: 100%;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 32px max(24px, calc((100vw - 1440px) / 2 + var(--page-gutter))) 64px;
+  padding: 32px 64px 64px;
 }
 
 .running-costs__heading {
@@ -326,6 +327,19 @@
   color: var(--text-nav);
 }
 
+@media (max-width: 979px) {
+  .running-costs__inner {
+    padding-left: 44px;
+    padding-right: 44px;
+  }
+}
+
+@media (max-width: 779px) {
+  .running-costs__inner {
+    padding: 24px 32px 48px;
+  }
+}
+
 @media (max-width: 1023px) {
   .running-costs__card-body {
     flex-direction: column;
@@ -338,11 +352,6 @@
 }
 
 @media (max-width: 767px) {
-  .running-costs__inner {
-    padding-top: 24px;
-    padding-bottom: 48px;
-  }
-
   .running-costs__footer-row,
   .running-costs__loan-banner {
     flex-direction: column;

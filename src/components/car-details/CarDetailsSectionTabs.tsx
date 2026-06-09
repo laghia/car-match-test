@@ -50,21 +50,23 @@ export function CarDetailsSectionTabs() {
 
   return (
     <nav className="car-details-tabs" aria-label="Car details sections">
-      <ul className="car-details-tabs__list">
-        {tabs.map((tab) => (
-          <li key={tab.id}>
-            <a
-              href={`#${tab.id}`}
-              className={`car-details-tabs__tab ${
-                activeSection === tab.id ? 'car-details-tabs__tab--active' : ''
-              }`}
-              aria-current={activeSection === tab.id ? 'true' : undefined}
-            >
-              {tab.label}
-            </a>
-          </li>
-        ))}
-      </ul>
+      <div className="car-details-tabs__inner">
+        <ul className="car-details-tabs__list">
+          {tabs.map((tab) => (
+            <li key={tab.id}>
+              <a
+                href={`#${tab.id}`}
+                className={`car-details-tabs__tab ${
+                  activeSection === tab.id ? 'car-details-tabs__tab--active' : ''
+                }`}
+                aria-current={activeSection === tab.id ? 'true' : undefined}
+              >
+                {tab.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </nav>
   );
 }

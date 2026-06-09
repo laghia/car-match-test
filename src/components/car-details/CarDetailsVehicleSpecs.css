@@ -7,9 +7,10 @@
 .vehicle-specs__inner {
   display: flex;
   flex-direction: column;
-  max-width: 822px;
+  width: 100%;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 32px max(24px, calc((100vw - 1440px) / 2 + var(--page-gutter))) 64px;
+  padding: 32px 64px 64px;
 }
 
 .vehicle-specs__page-heading {
@@ -119,12 +120,20 @@
   color: var(--text-03);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 979px) {
   .vehicle-specs__inner {
-    padding-top: 24px;
-    padding-bottom: 48px;
+    padding-left: 44px;
+    padding-right: 44px;
   }
+}
 
+@media (max-width: 779px) {
+  .vehicle-specs__inner {
+    padding: 24px 32px 48px;
+  }
+}
+
+@media (max-width: 767px) {
   .vehicle-specs__row {
     flex-direction: column;
     gap: 4px;

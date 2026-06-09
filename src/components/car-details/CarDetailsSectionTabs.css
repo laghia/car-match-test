@@ -4,14 +4,34 @@
   background: var(--ui-01);
 }
 
+.car-details-tabs__inner {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 64px;
+}
+
+@media (max-width: 979px) {
+  .car-details-tabs__inner {
+    padding-left: 44px;
+    padding-right: 44px;
+  }
+}
+
+@media (max-width: 779px) {
+  .car-details-tabs__inner {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
 .car-details-tabs__list {
   display: flex;
   flex-wrap: wrap;
   gap: 0;
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 0 max(24px, calc((100vw - 1440px) / 2 + var(--page-gutter)));
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .car-details-tabs__tab {

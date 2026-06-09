@@ -35,7 +35,7 @@ export function ArticleGrid({ title, articles, ctaLabel }: ArticleGridProps) {
           ))}
         </ul>
         <div className="article-grid__cta">
-          <Button>{ctaLabel}</Button>
+          <Button variant="digital-primary">{ctaLabel}</Button>
         </div>
       </div>
     </section>

@@ -8,9 +8,10 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  max-width: 822px;
+  width: 100%;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 32px max(24px, calc((100vw - 1440px) / 2 + var(--page-gutter))) 64px;
+  padding: 32px 64px 64px;
 }
 
 .expert-review__heading {
@@ -41,9 +42,15 @@
   color: var(--text-nav);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 979px) {
   .expert-review__inner {
-    padding-top: 24px;
-    padding-bottom: 48px;
+    padding-left: 44px;
+    padding-right: 44px;
+  }
+}
+
+@media (max-width: 779px) {
+  .expert-review__inner {
+    padding: 24px 32px 48px;
   }
 }

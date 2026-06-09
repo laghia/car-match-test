@@ -16,8 +16,8 @@ export function FinanceTiles() {
               <h3>{tile.title}</h3>
               <p>{tile.description}</p>
               <div className="finance-tiles__actions">
-                <Button variant="secondary">{tile.cta}</Button>
-                <Button>{tile.secondaryCta}</Button>
+                <Button variant="digital-secondary">{tile.cta}</Button>
+                <Button variant="digital-primary">{tile.secondaryCta}</Button>
               </div>
             </div>
           ))}
