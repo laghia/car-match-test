@@ -1,0 +1,51 @@
+.related-cars {
+  width: 100%;
+  background: var(--ui-01);
+}
+
+.related-cars__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: center;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px max(24px, calc((100vw - 1440px) / 2 + var(--page-gutter))) 64px;
+}
+
+.related-cars__header {
+  width: 100%;
+  max-width: 822px;
+}
+
+.related-cars__heading {
+  font-size: 28px;
+  line-height: 40px;
+  text-align: center;
+  color: var(--interactive-01-secondary-dark);
+}
+
+.related-cars__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.related-cars__cta {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.related-cars__cta-link {
+  display: inline-flex;
+  text-decoration: none;
+}
+
+@media (max-width: 767px) {
+  .related-cars__inner {
+    padding-bottom: 48px;
+  }
+}

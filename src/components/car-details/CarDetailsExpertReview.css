@@ -1,0 +1,49 @@
+.expert-review {
+  width: 100%;
+  background: var(--ui-01);
+  scroll-margin-top: 120px;
+}
+
+.expert-review__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 822px;
+  margin: 0 auto;
+  padding: 32px max(24px, calc((100vw - 1440px) / 2 + var(--page-gutter))) 64px;
+}
+
+.expert-review__heading {
+  font-size: 28px;
+  line-height: 40px;
+  color: var(--interactive-01-secondary-dark);
+}
+
+.expert-review__empty {
+  padding: 24px;
+  border-radius: 4px;
+  background: var(--ui-02);
+}
+
+.expert-review__empty-title {
+  margin-bottom: 8px;
+  font-family: var(--family-heading);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--interactive-01-secondary-dark);
+}
+
+.expert-review__empty-text {
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.25px;
+  color: var(--text-nav);
+}
+
+@media (max-width: 767px) {
+  .expert-review__inner {
+    padding-top: 24px;
+    padding-bottom: 48px;
+  }
+}

@@ -8,7 +8,7 @@ export function CategoryTiles() {
   const navigate = useNavigate();
 
   const handleCategoryClick = (tag: string) => {
-    navigate(`${getSearchDestination()}?category=${tag}`);
+    navigate(`${getSearchDestination()}/${tag}`);
   };
 
   return (

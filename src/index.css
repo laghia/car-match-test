@@ -2,6 +2,8 @@
   --interactive-01: #0067f6;
   --interactive-01-secondary: #ffffff;
   --interactive-01-secondary-dark: #001657;
+  --interactive-03: #001657;
+  --text-03: #151515;
   --interactive-01-tertiary: #0052c4;
   --interactive-03-quaternary: #0067f6;
   --ui-01: #ffffff;
@@ -20,7 +22,10 @@
   --border-01: #dfdfdf;
   --container-01: #0067f6;
   --accent-yellow: #f8db00;
+  --accent-01: #43e6eb;
   --accent-blue-light: #e8f1fe;
+  --ui-03: #f2f7ff;
+  --cost-running: #43e6eb;
   --disabled-content: rgba(112, 111, 118, 0.5);
   --family-heading: 'Poppins', system-ui, sans-serif;
   --family-body: system-ui, -apple-system, 'Segoe UI', sans-serif;

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fuelTypes, popularMakes } from '../data/content';
-import { getSearchDestination } from '../flow/config';
+import { buildSearchUrl } from '../flow/config';
 import { HeartIcon } from './Icons';
 import { Button } from './Button';
 import './FilterSearch.css';
@@ -31,13 +31,7 @@ export function FilterSearch() {
   };
 
   const handleSearch = () => {
-    const params = new URLSearchParams();
-    if (filters.make) params.set('make', filters.make);
-    if (filters.model) params.set('model', filters.model);
-    if (filters.fuel) params.set('fuel', filters.fuel);
-
-    const query = params.toString();
-    navigate(`${getSearchDestination()}${query ? `?${query}` : ''}`);
+    navigate(buildSearchUrl(filters));
   };
 
   return (

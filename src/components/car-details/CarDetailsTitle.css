@@ -1,0 +1,67 @@
+.car-details-title {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.car-details-title__heading-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.car-details-title__h1 {
+  flex: 1;
+  min-width: 0;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 56px;
+  color: var(--interactive-01-secondary-dark);
+}
+
+.car-details-title__shortlist {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 24px 10px 16px;
+  border: 2px solid transparent;
+  border-radius: 64px;
+  background: var(--ui-01);
+  color: var(--link);
+  font-family: var(--family-heading);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.car-details-title__shortlist:hover {
+  opacity: 0.85;
+}
+
+.car-details-title__variant {
+  font-size: 18px;
+  line-height: 30px;
+  letter-spacing: 0.25px;
+  color: var(--text-nav);
+}
+
+@media (max-width: 767px) {
+  .car-details-title__heading-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .car-details-title__h1 {
+    font-size: clamp(28px, 7vw, 40px);
+    line-height: 1.25;
+  }
+
+  .car-details-title__shortlist {
+    width: 100%;
+    justify-content: center;
+  }
+}

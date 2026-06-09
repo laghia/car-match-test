@@ -1,0 +1,116 @@
+.search-filters {
+  flex-shrink: 0;
+  width: 288px;
+  background: var(--ui-01);
+  border: 1px solid var(--border-01);
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px var(--border-01);
+  overflow: hidden;
+}
+
+.search-filters__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-01);
+}
+
+.search-filters__title {
+  font-size: 20px;
+  line-height: 30px;
+  color: var(--interactive-01-secondary-dark);
+}
+
+.search-filters__clear {
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: var(--family-heading);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: var(--link);
+  cursor: pointer;
+}
+
+.search-filters__clear--disabled {
+  color: var(--disabled-content);
+  cursor: default;
+}
+
+.search-filters__section {
+  padding-bottom: 8px;
+}
+
+.search-filters__section-title {
+  margin: 0;
+  padding: 24px 16px 8px;
+  border-bottom: 1px solid var(--interactive-01-secondary-dark);
+  font-family: var(--family-heading);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--interactive-01-secondary-dark);
+}
+
+.search-filters__list {
+  list-style: none;
+  margin: 0;
+  padding: 0 8px;
+}
+
+.search-filters__item {
+  border-top: 1px solid var(--border-01);
+}
+
+.search-filters__item:first-child {
+  border-top: none;
+}
+
+.search-filters__accordion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px 8px 8px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.search-filters__accordion-label {
+  flex: 1;
+  font-family: var(--family-heading);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--link);
+}
+
+.search-filters__accordion svg {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  color: var(--link);
+}
+
+.search-filters__value {
+  padding: 0 8px 8px;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+  color: var(--text-nav);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1023px) {
+  .search-filters {
+    display: none;
+  }
+}

@@ -1,0 +1,41 @@
+.car-details-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.car-details-page__content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px max(24px, calc((100vw - 1440px) / 2 + var(--page-gutter))) 64px;
+  width: 100%;
+  background: var(--ui-03);
+}
+
+.car-details-page__overview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.car-details-page__hero-row {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+@media (max-width: 1023px) {
+  .car-details-page__hero-row {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 767px) {
+  .car-details-page__content {
+    padding-top: 24px;
+    padding-bottom: 48px;
+  }
+}

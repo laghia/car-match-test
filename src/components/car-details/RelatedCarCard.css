@@ -1,0 +1,225 @@
+.related-car-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 270px;
+  max-width: 440px;
+  flex: 1 1 calc(33.333% - 22px);
+  background: var(--ui-01);
+  border: 1px solid var(--border-01);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.related-car-card__media {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.related-car-card__image-wrap {
+  aspect-ratio: 375 / 211;
+  overflow: hidden;
+  background: var(--ui-01);
+  margin-bottom: -24px;
+}
+
+.related-car-card__image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.related-car-card__tags {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 32px;
+  padding: 0 8px;
+}
+
+.related-car-card__year-tag {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.related-car-card__year-tag--current-model {
+  background: var(--interactive-03);
+  color: var(--ui-01);
+}
+
+.related-car-card__year-tag--coming-soon {
+  background: var(--ui-02);
+  color: var(--interactive-01-secondary-dark);
+}
+
+.related-car-card__fuel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  margin-left: auto;
+  padding-right: 8px;
+  border-radius: 48px;
+  background: var(--ui-01);
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+  color: var(--interactive-01-secondary-dark);
+}
+
+.related-car-card__fuel-badge svg {
+  flex-shrink: 0;
+}
+
+.related-car-card__shortlist {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--ui-01);
+  color: var(--link);
+  cursor: pointer;
+}
+
+.related-car-card__shortlist:hover {
+  opacity: 0.85;
+}
+
+.related-car-card__content {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 8px 16px;
+}
+
+.related-car-card__summary {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.related-car-card__title {
+  font-size: 20px;
+  line-height: 30px;
+  color: var(--interactive-01-secondary-dark);
+}
+
+.related-car-card__variant {
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+  color: var(--text-nav);
+}
+
+.related-car-card__price-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.related-car-card__price {
+  font-family: var(--family-heading);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 30px;
+  color: var(--interactive-01-secondary-dark);
+}
+
+.related-car-card__price sup {
+  font-size: 11px;
+  line-height: 1;
+  vertical-align: super;
+}
+
+.related-car-card__driveaway {
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+  color: var(--text-04);
+}
+
+.related-car-card__variants {
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+  color: var(--text-04);
+}
+
+.related-car-card__rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  width: 67px;
+  padding: 8px 8px 4px;
+  border-radius: 8px;
+  background: var(--interactive-03);
+  color: var(--ui-01);
+}
+
+.related-car-card__rating-logo {
+  display: block;
+  width: 37px;
+  height: 20px;
+}
+
+.related-car-card__rating-label {
+  font-family: var(--family-heading);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.related-car-card__footer {
+  padding: 4px 16px 16px;
+}
+
+.related-car-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--family-heading);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+  color: var(--link);
+  text-decoration: none;
+}
+
+.related-car-card__link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 1199px) {
+  .related-car-card {
+    flex: 1 1 calc(50% - 16px);
+  }
+}
+
+@media (max-width: 639px) {
+  .related-car-card {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+}

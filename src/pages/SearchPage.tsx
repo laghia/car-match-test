@@ -1,111 +1,108 @@
-import { useSearchParams, Link } from 'react-router-dom';
-import { Button } from '../components/Button';
+import { useMemo } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import {
+  categoryTagLabels,
+  defaultSearchResults,
+  electricSearchResults,
+} from '../data/content';
+import { flowConfig } from '../flow/config';
+import { SearchFilterPanel } from '../components/search/SearchFilterPanel';
+import { SearchPagination } from '../components/search/SearchPagination';
+import { SearchResultsTitle } from '../components/search/SearchResultsTitle';
+import { VehicleCard } from '../components/search/VehicleCard';
 import './SearchPage.css';
 
-const mockResults = [
-  {
-    id: 1,
-    make: 'BYD',
-    model: 'Seal',
-    year: 2026,
-    fuel: 'Electric',
-    price: '$45,990',
-    image:
-      'https://www.racv.com.au/content/dam/racv-assets/images/images/content-hub/transport/2025-cars/byd/2025-byd-sealion-7/2025-byd-sealion-7-black/BYD-Sealion-7-Thumbnail.jpg.transform/imageDesktop/image.jpg',
-  },
-  {
-    id: 2,
-    make: 'Toyota',
-    model: 'RAV4',
-    year: 2026,
-    fuel: 'Hybrid',
-    price: '$42,500',
-    image:
-      'https://www.racv.com.au/content/dam/racv-assets/images/images/motor/car-match/1600x900/green-mg-1600x900.jpg',
-  },
-  {
-    id: 3,
-    make: 'MG',
-    model: '4',
-    year: 2026,
-    fuel: 'Electric',
-    price: '$38,990',
-    image:
-      'https://www.racv.com.au/content/dam/racv-assets/images/icons/car-match/electric-420x280.jpg',
-  },
-  {
-    id: 4,
-    make: 'Ford',
-    model: 'Everest',
-    year: 2026,
-    fuel: 'Diesel',
-    price: '$58,990',
-    image:
-      'https://www.racv.com.au/content/dam/racv-assets/images/images/content-hub/transport/2026-cars/ford/ford-everest/ford-everest-active/banners-and-thumbnails/2026-Ford-Everest-Active-thumbnail-900x600.jpg.transform/imageDesktop/image.jpg',
-  },
-];
+type ActiveTag = {
+  id: string;
+  label: string;
+};
+
+function buildActiveTags(
+  tag: string | undefined,
+  make: string | null,
+  model: string | null,
+  fuel: string | null,
+  category: string | null,
+): ActiveTag[] {
+  const tags: ActiveTag[] = [];
+
+  const categoryKey = tag || category;
+  if (categoryKey && categoryTagLabels[categoryKey]) {
+    tags.push({ id: `category-${categoryKey}`, label: categoryTagLabels[categoryKey] });
+  }
+
+  if (make) tags.push({ id: 'make', label: make });
+  if (model) tags.push({ id: 'model', label: model });
+  if (fuel) tags.push({ id: 'fuel', label: fuel });
+
+  return tags;
+}
+
+function getCarsFoundCount(tag: string | undefined): number {
+  if (tag === 'electric-tag') return 1250;
+  return 36850;
+}
 
 export function SearchPage() {
-  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { tag } = useParams<{ tag?: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const make = searchParams.get('make');
   const model = searchParams.get('model');
   const fuel = searchParams.get('fuel');
-  const bodyType = searchParams.get('bodyType');
   const category = searchParams.get('category');
 
-  const filters = [
-    make && `Make: ${make}`,
-    model && `Model: ${model}`,
-    fuel && `Fuel: ${fuel}`,
-    bodyType && `Body: ${bodyType}`,
-    category && `Category: ${category}`,
-  ].filter(Boolean);
+  const results =
+    tag === 'electric-tag' || category === 'electric-tag' || fuel === 'Electric'
+      ? electricSearchResults
+      : defaultSearchResults;
+
+  const activeTags = useMemo(
+    () => buildActiveTags(tag, make, model, fuel, category),
+    [tag, make, model, fuel, category],
+  );
+
+  const carsFoundCount = getCarsFoundCount(tag);
+  const filterCount = Math.max(activeTags.length, 1);
+
+  const handleRemoveTag = (id: string) => {
+    if (id.startsWith('category-') && tag) {
+      const nextParams = searchParams.toString();
+      navigate(`${flowConfig.searchPath}${nextParams ? `?${nextParams}` : ''}`);
+      return;
+    }
+
+    const nextParams = new URLSearchParams(searchParams);
+    if (id === 'make') nextParams.delete('make');
+    if (id === 'model') nextParams.delete('model');
+    if (id === 'fuel') nextParams.delete('fuel');
+    if (id.startsWith('category-')) nextParams.delete('category');
+    setSearchParams(nextParams, { replace: true });
+  };
+
+  const handleClearAll = () => {
+    navigate(flowConfig.searchPath);
+  };
 
   return (
     <div className="search-page">
-      <div className="container">
-        <nav className="search-page__breadcrumb" aria-label="Breadcrumb">
-          <Link to="/">Car Match</Link>
-          <span aria-hidden="true">/</span>
-          <span>Search results</span>
-        </nav>
+      <SearchResultsTitle
+        carsFoundCount={carsFoundCount}
+        tags={activeTags}
+        onRemoveTag={handleRemoveTag}
+        shortlistCount={0}
+      />
 
-        <div className="search-page__header">
-          <h1>Search results</h1>
-          {filters.length > 0 ? (
-            <p className="search-page__filters">
-              Showing results for: {filters.join(' · ')}
-            </p>
-          ) : (
-            <p className="search-page__filters">Showing all available vehicles</p>
-          )}
-        </div>
+      <div className="search-page__layout">
+        <SearchFilterPanel activeCount={filterCount} onClearAll={handleClearAll} />
 
-        <div className="search-page__prototype-note">
-          <strong>Prototype note:</strong> This is a mock search results page for user testing.
-          Results are static placeholders.
-        </div>
-
-        <div className="search-page__results">
-          {mockResults.map((car) => (
-            <article key={car.id} className="search-result-card">
-              <img src={car.image} alt={`${car.make} ${car.model}`} />
-              <div className="search-result-card__content">
-                <h2>
-                  {car.year} {car.make} {car.model}
-                </h2>
-                <p className="search-result-card__fuel">{car.fuel}</p>
-                <p className="search-result-card__price">From {car.price}</p>
-                <Button variant="secondary">Compare</Button>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <div className="search-page__back">
-          <Link to="/">
-            <Button variant="secondary">Back to Car Match</Button>
-          </Link>
+        <div className="search-page__main">
+          <div className="search-page__grid">
+            {results.map((vehicle) => (
+              <VehicleCard key={vehicle.id} vehicle={vehicle} />
+            ))}
+          </div>
+          <SearchPagination />
         </div>
       </div>
     </div>
