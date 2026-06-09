@@ -1,0 +1,63 @@
+.finance-tiles {
+  padding: 0 0 64px;
+}
+
+.finance-tiles__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.finance-tiles__card {
+  background: var(--ui-01);
+  border: 1px solid var(--border-01);
+  border-radius: 8px;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.finance-tiles__icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: var(--interactive-01);
+}
+
+.finance-tiles__icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+.finance-tiles__card h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.finance-tiles__card p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-02);
+  margin-bottom: 24px;
+}
+
+.finance-tiles__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .finance-tiles__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .finance-tiles__actions {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .finance-tiles__actions .btn {
+    width: auto;
+  }
+}

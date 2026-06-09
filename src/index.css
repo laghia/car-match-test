@@ -1,0 +1,118 @@
+:root {
+  --interactive-01: #0067f6;
+  --interactive-01-secondary: #ffffff;
+  --interactive-01-secondary-dark: #001657;
+  --interactive-01-tertiary: #0052c4;
+  --interactive-03-quaternary: #0067f6;
+  --ui-01: #ffffff;
+  --ui-02: #f4f5f6;
+  --ui-05: #003987;
+  --text-01: #141414;
+  --text-02: #454545;
+  --text-04: #706f76;
+  --text-nav: #444444;
+  --text-05: #141414;
+  --link: #0067f6;
+  --field-label: #151515;
+  --field-bg: #fafbfc;
+  --field-border: #8e9195;
+  --field-placeholder: #706f76;
+  --border-01: #dfdfdf;
+  --container-01: #0067f6;
+  --accent-yellow: #f8db00;
+  --accent-blue-light: #e8f1fe;
+  --disabled-content: rgba(112, 111, 118, 0.5);
+  --family-heading: 'Poppins', system-ui, sans-serif;
+  --family-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --max-width: 1248px;
+  --page-gutter: 96px;
+  --header-height: 98px;
+  --shadow-card: 0 4px 8px 0 rgba(21, 21, 21, 0.12), 0 1px 2px 0 rgba(21, 21, 21, 0.08);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--family-body);
+  color: var(--text-01);
+  background: var(--ui-01);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--family-heading);
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-01);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (min-width: 1200px) {
+  .container {
+    padding-left: max(24px, calc((100vw - 1440px) / 2 + var(--page-gutter)));
+    padding-right: max(24px, calc((100vw - 1440px) / 2 + var(--page-gutter)));
+  }
+}
+
+.container--wide {
+  max-width: 1440px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
