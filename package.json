@@ -6,6 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:pages": "tsc -b && vite build --mode pages && node scripts/post-build-pages.mjs",
+    "deploy": "node scripts/deploy-pages.mjs",
+    "setup:github": "node scripts/setup-github.mjs",
+    "preview:pages": "vite preview --mode pages",
     "lint": "eslint .",
     "preview": "vite preview"
   },

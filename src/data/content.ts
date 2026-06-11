@@ -1,5 +1,7 @@
 import { buildCarDetailsUrl } from '../flow/config';
 
+import { assetUrl } from '../utils/baseUrl';
+
 const RACV = 'https://www.racv.com.au';
 
 export const assets = {
@@ -367,7 +369,7 @@ export const defaultSearchResults: VehicleResult[] = [
     price: '$29,050',
     fuelType: 'Petrol',
     engine: '108kW automatic FWD',
-    image: '/chery-tiggo-4-card.png',
+    image: assetUrl('/chery-tiggo-4-card.png'),
     makeSlug: 'chery',
     modelSlug: 'tiggo-4',
     variantSlug: 'ultimate-8448836f0465815247e42d2961a082dcdc2bda6',
@@ -779,10 +781,10 @@ const rav4VehicleSpecs: VehicleSpecsData = {
 };
 
 const cheryTiggoImages = [
-  '/chery-tiggo-4-card.png',
-  '/chery-tiggo-4-card.png',
-  '/chery-tiggo-4-card.png',
-  '/chery-tiggo-4-card.png',
+  assetUrl('/chery-tiggo-4-card.png'),
+  assetUrl('/chery-tiggo-4-card.png'),
+  assetUrl('/chery-tiggo-4-card.png'),
+  assetUrl('/chery-tiggo-4-card.png'),
 ];
 
 const corollaImages = [

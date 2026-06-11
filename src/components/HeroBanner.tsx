@@ -1,4 +1,5 @@
 import { assets } from '../data/content';
+import { assetUrl } from '../utils/baseUrl';
 import './HeroBanner.css';
 
 export function HeroBanner() {
@@ -20,7 +21,7 @@ export function HeroBanner() {
           <img src={assets.hero} alt="Green MG electric vehicle" className="hero-cm__image" />
         </picture>
         <div className="hero-cm__journey" aria-hidden="true">
-          <img src="/journey-device-solid.svg" alt="" />
+          <img src={assetUrl('/journey-device-solid.svg')} alt="" />
         </div>
       </div>
     </div>

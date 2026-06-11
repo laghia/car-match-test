@@ -1,3 +1,4 @@
+import { assetUrl } from '../utils/baseUrl';
 import './Footer.css';
 
 const footerColumns = [
@@ -98,7 +99,7 @@ export function Footer() {
       <div className="footer__top">
         <div className="footer__inner">
           <div className="footer__logo">
-            <img src="/racv-footer-logo.svg" alt="RACV" width="133" height="72" />
+            <img src={assetUrl('/racv-footer-logo.svg')} alt="RACV" width="133" height="72" />
           </div>
 
           <div className="footer__columns">
@@ -175,10 +176,10 @@ export function Footer() {
             <p className="footer__badges-label">Download the RACV App</p>
             <div className="footer__badges-row">
               <a href="#" aria-label="Download on the App Store">
-                <img src="/app-store-badge.svg" alt="" width="144" height="48" />
+                <img src={assetUrl('/app-store-badge.svg')} alt="" width="144" height="48" />
               </a>
               <a href="#" aria-label="Get it on Google Play">
-                <img src="/google-play-badge.svg" alt="" width="162" height="48" />
+                <img src={assetUrl('/google-play-badge.svg')} alt="" width="162" height="48" />
               </a>
             </div>
           </div>

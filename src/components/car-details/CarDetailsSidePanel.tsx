@@ -1,4 +1,5 @@
 import type { CarDetailsSpec } from '../../data/content';
+import { assetUrl } from '../../utils/baseUrl';
 import { Button } from '../Button';
 import './CarDetailsSidePanel.css';
 
@@ -51,7 +52,7 @@ export function CarDetailsSidePanel({
           <div className="car-details-side-panel__rating" aria-label="RACV Review">
             <img
               className="car-details-side-panel__rating-logo"
-              src="/racv-rating-logo.svg"
+              src={assetUrl('/racv-rating-logo.svg')}
               alt=""
               width={37}
               height={20}

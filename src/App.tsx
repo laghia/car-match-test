@@ -5,10 +5,11 @@ import { SearchPage } from './pages/SearchPage';
 import { CarDetailsPage } from './pages/CarDetailsPage';
 import { NewScreenPage } from './pages/NewScreenPage';
 import { flowConfig } from './flow/config';
+import { getBasename } from './utils/baseUrl';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={getBasename()}>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<LandingPage />} />

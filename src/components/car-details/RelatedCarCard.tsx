@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { RelatedCar } from '../../data/content';
 import { getVehicleDetailsPath } from '../../data/content';
+import { assetUrl } from '../../utils/baseUrl';
 import { ChevronRight, ElectricBadge, HeartOutlineIcon, HybridBadge } from '../Icons';
 import './RelatedCarCard.css';
 
@@ -69,7 +70,7 @@ export function RelatedCarCard({ car }: RelatedCarCardProps) {
           <div className="related-car-card__rating" aria-label="RACV Review">
             <img
               className="related-car-card__rating-logo"
-              src="/racv-rating-logo.svg"
+              src={assetUrl('/racv-rating-logo.svg')}
               alt=""
               width={37}
               height={20}

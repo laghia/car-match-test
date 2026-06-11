@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { RunningCostsData } from '../../data/content';
+import { assetUrl } from '../../utils/baseUrl';
 import { Button } from '../Button';
 import { ChevronDownIcon } from '../Icons';
 import { EditRunningCostsPanel } from './EditRunningCostsPanel';
@@ -10,20 +11,20 @@ type CarDetailsRunningCostsProps = {
 };
 
 const LINE_ITEM_ICONS: Record<string, string> = {
-  'car-loan': '/icons/running-costs/car-loan.png',
-  registration: '/icons/running-costs/licence.png',
-  fuel: '/icons/running-costs/fuel.png',
-  servicing: '/icons/running-costs/wrench.png',
-  tyres: '/icons/running-costs/tyre.png',
-  battery: '/icons/running-costs/battery.png',
-  roadside: '/icons/running-costs/roadside.png',
+  'car-loan': assetUrl('/icons/running-costs/car-loan.png'),
+  registration: assetUrl('/icons/running-costs/licence.png'),
+  fuel: assetUrl('/icons/running-costs/fuel.png'),
+  servicing: assetUrl('/icons/running-costs/wrench.png'),
+  tyres: assetUrl('/icons/running-costs/tyre.png'),
+  battery: assetUrl('/icons/running-costs/battery.png'),
+  roadside: assetUrl('/icons/running-costs/roadside.png'),
 };
 
 function HelpIcon() {
   return (
     <img
       className="running-costs__help"
-      src="/icons/running-costs/help-circle.png"
+      src={assetUrl('/icons/running-costs/help-circle.png')}
       alt=""
       width={16}
       height={16}

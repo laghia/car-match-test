@@ -1,0 +1,6 @@
+{
+  "base": "/car-match-test/",
+  "outDir": "docs",
+  "remote": "github",
+  "branch": "main"
+}

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { assetUrl } from '../utils/baseUrl';
 import { SearchIcon } from './Icons';
 import './Header.css';
 
@@ -25,7 +26,7 @@ export function Header() {
       <div className="header__shell">
         <div className="header__container">
           <Link to="/" className="header__logo" aria-label="RACV home">
-            <img src="/racv-master-logo.svg" alt="" width="93" height="50" />
+            <img src={assetUrl('/racv-master-logo.svg')} alt="" width="93" height="50" />
           </Link>
 
           <div className="header__content">
