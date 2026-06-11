@@ -1,4 +1,13 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FocusEvent,
+  type ReactNode,
+} from 'react';
+import { createPortal } from 'react-dom';
 import type { RunningCostsData } from '../../data/content';
 import { assetUrl } from '../../utils/baseUrl';
 import { Button } from '../Button';
@@ -56,27 +65,105 @@ const COST_TOOLTIPS: Record<string, ReactNode> = {
 
 function CostTooltip({ id, label }: { id: keyof typeof COST_TOOLTIPS; label: string }) {
   const tooltipId = `running-costs-tooltip-${id}`;
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const tooltipContentRef = useRef<HTMLSpanElement>(null);
+  const closeTimeoutRef = useRef<number | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+
+  const updatePosition = useCallback(() => {
+    const rect = triggerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    setPosition({
+      top: rect.bottom + 8,
+      left: rect.left + rect.width / 2,
+    });
+  }, []);
+
+  const clearCloseTimeout = useCallback(() => {
+    if (closeTimeoutRef.current !== null) {
+      window.clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  }, []);
+
+  const openTooltip = useCallback(() => {
+    clearCloseTimeout();
+    updatePosition();
+    setIsOpen(true);
+  }, [clearCloseTimeout, updatePosition]);
+
+  const scheduleClose = useCallback(() => {
+    clearCloseTimeout();
+    closeTimeoutRef.current = window.setTimeout(() => setIsOpen(false), 120);
+  }, [clearCloseTimeout]);
+
+  const handleTriggerBlur = useCallback((event: FocusEvent<HTMLButtonElement>) => {
+    const next = event.relatedTarget;
+    if (next instanceof Node && tooltipContentRef.current?.contains(next)) {
+      return;
+    }
+
+    scheduleClose();
+  }, [scheduleClose]);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const handleReposition = () => updatePosition();
+
+    window.addEventListener('scroll', handleReposition, true);
+    window.addEventListener('resize', handleReposition);
+
+    return () => {
+      window.removeEventListener('scroll', handleReposition, true);
+      window.removeEventListener('resize', handleReposition);
+    };
+  }, [isOpen, updatePosition]);
+
+  useEffect(
+    () => () => {
+      clearCloseTimeout();
+    },
+    [clearCloseTimeout],
+  );
+
+  const isWide = id === 'car-loan' || id === 'running-costs';
 
   return (
-    <span className="running-costs__tooltip">
-      <button
-        type="button"
-        className="running-costs__tooltip-trigger"
-        aria-label={`More information about ${label}`}
-        aria-describedby={tooltipId}
-      >
-        <TooltipIcon />
-      </button>
-      <span
-        id={tooltipId}
-        role="tooltip"
-        className={`running-costs__tooltip-content${
-          id === 'car-loan' || id === 'running-costs' ? ' running-costs__tooltip-content--wide' : ''
-        }`}
-      >
-        {COST_TOOLTIPS[id]}
+    <>
+      <span className="running-costs__tooltip" onMouseEnter={openTooltip} onMouseLeave={scheduleClose}>
+        <button
+          ref={triggerRef}
+          type="button"
+          className="running-costs__tooltip-trigger"
+          aria-label={`More information about ${label}`}
+          aria-describedby={isOpen ? tooltipId : undefined}
+          onFocus={openTooltip}
+          onBlur={handleTriggerBlur}
+        >
+          <TooltipIcon />
+        </button>
       </span>
-    </span>
+      {isOpen &&
+        createPortal(
+          <span
+            ref={tooltipContentRef}
+            id={tooltipId}
+            role="tooltip"
+            className={`running-costs__tooltip-content running-costs__tooltip-content--portal${
+              isWide ? ' running-costs__tooltip-content--wide' : ''
+            }`}
+            style={{ top: position.top, left: position.left }}
+            onMouseEnter={openTooltip}
+            onMouseLeave={scheduleClose}
+          >
+            {COST_TOOLTIPS[id]}
+          </span>,
+          document.body,
+        )}
+    </>
   );
 }
 
@@ -89,6 +176,27 @@ function LineItemIcon({ id }: { id: string }) {
   if (!src) return null;
 
   return <img className="running-costs__icon" src={src} alt="" width={24} height={24} aria-hidden="true" />;
+}
+
+function RunningCostsCardLoader() {
+  return (
+    <div className="running-costs__card-loading" role="status" aria-live="polite" aria-label="Updating costs">
+      <svg className="running-costs__spinner" viewBox="0 0 48 48" aria-hidden="true">
+        <circle className="running-costs__spinner-track" cx="24" cy="24" r="20" fill="none" strokeWidth="4" />
+        <circle
+          className="running-costs__spinner-arc"
+          cx="24"
+          cy="24"
+          r="20"
+          fill="none"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeDasharray="31.4 94.2"
+          transform="rotate(-90 24 24)"
+        />
+      </svg>
+    </div>
+  );
 }
 
 function DonutChart({
@@ -131,12 +239,41 @@ function DonutChart({
 export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
   const [viewAs, setViewAs] = useState<'monthly' | 'annual'>('monthly');
   const [isEditPanelOpen, setIsEditPanelOpen] = useState(false);
+  const [isCardLoading, setIsCardLoading] = useState(false);
   const [runningCosts, setRunningCosts] = useState(data);
+  const loadingTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     setRunningCosts(data);
     setIsEditPanelOpen(false);
+    setIsCardLoading(false);
   }, [data]);
+
+  useEffect(
+    () => () => {
+      if (loadingTimeoutRef.current !== null) {
+        window.clearTimeout(loadingTimeoutRef.current);
+      }
+    },
+    [],
+  );
+
+  const handleRunningCostsUpdate = (updated: RunningCostsData) => {
+    if (isCardLoading) return;
+
+    setIsCardLoading(true);
+
+    if (loadingTimeoutRef.current !== null) {
+      window.clearTimeout(loadingTimeoutRef.current);
+    }
+
+    loadingTimeoutRef.current = window.setTimeout(() => {
+      setRunningCosts(updated);
+      setIsCardLoading(false);
+      setIsEditPanelOpen(false);
+      loadingTimeoutRef.current = null;
+    }, 700);
+  };
 
   const multiplier = viewAs === 'monthly' ? 1 : 12;
   const parseLineItemAmount = (value: string) =>
@@ -156,6 +293,7 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
   );
   const insuranceAmount = runningCosts.insuranceCost;
   const totalAmount = ownershipAmount + runningAmount + insuranceAmount;
+  const showTooltips = !runningCosts.customizations;
 
   return (
     <section
@@ -180,7 +318,11 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
             .
           </p>
 
-          <div className="running-costs__card">
+          <div
+            className={`running-costs__card${isCardLoading ? ' running-costs__card--loading' : ''}`}
+            aria-busy={isCardLoading}
+          >
+            {isCardLoading && <RunningCostsCardLoader />}
             <div className="running-costs__card-body">
               <div className="running-costs__list-col">
                 <div className="running-costs__list">
@@ -190,7 +332,7 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
                       <div className="running-costs__label-wrap">
                         <div className="running-costs__label running-costs__label--strong">
                           Car loan
-                          <CostTooltip id="car-loan" label="car loan" />
+                          {showTooltips && <CostTooltip id="car-loan" label="car loan" />}
                         </div>
                       </div>
                     </div>
@@ -217,7 +359,7 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
                       <div className="running-costs__label-wrap">
                         <div className="running-costs__label running-costs__label--strong">
                           Running costs
-                          <CostTooltip id="running-costs" label="running costs" />
+                          {showTooltips && <CostTooltip id="running-costs" label="running costs" />}
                         </div>
                       </div>
                     </div>
@@ -255,7 +397,7 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
                       <div className="running-costs__label-wrap">
                         <div className="running-costs__label running-costs__label--strong">
                           Car Insurance
-                          <CostTooltip id="insurance" label="car insurance" />
+                          {showTooltips && <CostTooltip id="insurance" label="car insurance" />}
                         </div>
                         <a href="#get-quote" className="running-costs__link">
                           Get an RACV Insurance quote
@@ -316,7 +458,8 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
             baselineData={data}
             viewAs={viewAs}
             onClose={() => setIsEditPanelOpen(false)}
-            onUpdate={setRunningCosts}
+            onUpdate={handleRunningCostsUpdate}
+            isUpdating={isCardLoading}
           />
         )}
       </div>

@@ -17,6 +17,7 @@ type EditRunningCostsPanelProps = {
   viewAs: RunningCostsViewAs;
   onClose: () => void;
   onUpdate: (updatedData: RunningCostsData) => void;
+  isUpdating?: boolean;
 };
 
 type EditCostsFormState = {
@@ -314,6 +315,7 @@ export function EditRunningCostsPanel({
   viewAs,
   onClose,
   onUpdate,
+  isUpdating = false,
 }: EditRunningCostsPanelProps) {
   const titleId = useId();
   const [form, setForm] = useState<EditCostsFormState>(() =>
@@ -378,8 +380,9 @@ export function EditRunningCostsPanel({
   };
 
   const handleUpdate = () => {
+    if (isUpdating) return;
+
     onUpdate(applyFormToRunningCosts(form, data, baselineData, viewAs));
-    onClose();
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -551,7 +554,7 @@ export function EditRunningCostsPanel({
         </div>
 
         <div className="edit-costs-panel__footer">
-          <Button variant="digital-primary" fullWidth onClick={handleUpdate}>
+          <Button variant="digital-primary" fullWidth onClick={handleUpdate} disabled={isUpdating}>
             Update
           </Button>
         </div>
