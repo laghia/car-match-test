@@ -118,19 +118,18 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
       <div className="running-costs__shell">
         <div className="running-costs__inner">
           <h2 id="running-costs-heading" className="running-costs__heading">
-            Estimated running costs
+            Estimated cost of ownership
           </h2>
           <p className="running-costs__intro">
-            See the indicative costs of owning and running this car in Victoria with RACV products,
-            and based on driving 15,000kms per year,{' '}
+          See the estimated costs of owning this car in Victoria**. To learn more, read the{' '}
             <a
               href="https://www.racv.com.au/car-match/car-match-faqs.html#Whatareestimatedrunningcosts"
               target="_blank"
               rel="noreferrer"
             >
-              learn more
+              Car Match FAQs
             </a>
-            .**
+            .
           </p>
 
           <div className="running-costs__card">
@@ -142,7 +141,7 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
                       <CostDot variant="ownership" />
                       <div className="running-costs__label-wrap">
                         <div className="running-costs__label running-costs__label--strong">
-                          RACV Car loan costs
+                          Car loan
                           <HelpIcon />
                         </div>
                       </div>
@@ -158,7 +157,7 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
                       <div className="running-costs__label-wrap">
                         <p className="running-costs__sub-label">Want a new car loan?</p>
                         <a href="#get-rate" className="running-costs__link">
-                          Get my rate
+                          Get my RACV Car Loan rate
                         </a>
                       </div>
                     </div>
@@ -207,11 +206,11 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
                       <CostDot variant="insurance" />
                       <div className="running-costs__label-wrap">
                         <div className="running-costs__label running-costs__label--strong">
-                          RACV Car Insurance
+                          Car Insurance
                           <HelpIcon />
                         </div>
                         <a href="#get-quote" className="running-costs__link">
-                          Get a quote
+                          Get an RACV Insurance quote
                         </a>
                       </div>
                     </div>

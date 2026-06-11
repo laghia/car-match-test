@@ -379,7 +379,7 @@ export function EditRunningCostsPanel({
       >
         <div className="edit-costs-panel__header">
           <h2 id={titleId} className="edit-costs-panel__title">
-            Edit running costs
+            Customise costs
             {viewAs === 'annual' && (
               <span className="edit-costs-panel__period"></span>
             )}
@@ -391,8 +391,8 @@ export function EditRunningCostsPanel({
 
         <div className="edit-costs-panel__body">
           <form id="edit-costs-form" className="edit-costs-panel__form" onSubmit={handleSubmit}>
-            <Field id="has-finance" label="Do you have finance?">
-              <div className="edit-costs-panel__radios" role="radiogroup" aria-label="Do you have finance?">
+            <Field id="has-finance" label="Do you want to include finance costs?">
+              <div className="edit-costs-panel__radios" role="radiogroup" aria-label="Do you want to include finance costs?">
                 <label className="edit-costs-panel__radio">
                   <input
                     type="radio"
@@ -438,7 +438,7 @@ export function EditRunningCostsPanel({
                 <Field
                   id="interest-rate"
                   label="Interest rate"
-                  helper="RACV New car loan from 6.59% p.a. (comparison rate 7.29% p.a.+)."
+                  helper="Enter a rate between 5 and 18%."
                 >
                   <input
                     id="interest-rate"
@@ -457,7 +457,7 @@ export function EditRunningCostsPanel({
 
                 <Field
                   id="loan-term"
-                  label="Loan term (years)"
+                  label="Loan term"
                   helper="Enter a term from 1 to 7 years"
                 >
                   <input
