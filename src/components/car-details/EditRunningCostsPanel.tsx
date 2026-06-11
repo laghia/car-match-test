@@ -8,6 +8,7 @@ export type RunningCostsViewAs = 'monthly' | 'annual';
 
 type EditRunningCostsPanelProps = {
   data: RunningCostsData;
+  baselineData: RunningCostsData;
   viewAs: RunningCostsViewAs;
   onClose: () => void;
   onUpdate: (updatedData: RunningCostsData) => void;
@@ -18,14 +19,53 @@ type EditCostsFormState = {
   loanAmount: string;
   interestRate: string;
   loanTerm: string;
-  registration: string;
-  fuel: string;
-  servicing: string;
-  tyres: string;
-  battery: string;
+  annualKmBand: string;
   roadside: string;
   insurance: string;
 };
+
+const BASELINE_ANNUAL_KM = 15000;
+
+export const ANNUAL_KM_BANDS = [
+  { value: 'under-10000', label: 'Under 10,000 km', annualKm: 7500 },
+  { value: '10000-15000', label: '10,000 km - 15,000 km', annualKm: 15000 },
+  { value: '15000-20000', label: '15,000 km - 20,000 km', annualKm: 20000 },
+  { value: '20000-25000', label: '20,000 km - 25,000 km', annualKm: 25000 },
+  { value: 'over-25000', label: 'Over 25,000 km', annualKm: 30000 },
+] as const;
+
+const DEFAULT_ANNUAL_KM_BAND = ANNUAL_KM_BANDS[1].value;
+
+type KmScaledCostKey = 'registration' | 'fuel' | 'servicing' | 'tyres' | 'battery';
+
+function getKmBand(value: string) {
+  return ANNUAL_KM_BANDS.find((band) => band.value === value) ?? ANNUAL_KM_BANDS[1];
+}
+
+function getBaselineMonthlyCosts(data: RunningCostsData): Record<KmScaledCostKey, number> {
+  return {
+    registration: parseStoredAmount(getLineItemValue(data, 'registration', '96')),
+    fuel: parseStoredAmount(getLineItemValue(data, 'fuel', '104')),
+    servicing: parseStoredAmount(getLineItemValue(data, 'servicing', '45')),
+    tyres: parseStoredAmount(getLineItemValue(data, 'tyres', '16')),
+    battery: parseStoredAmount(getLineItemValue(data, 'battery', '8')),
+  };
+}
+
+function calculateKmScaledMonthlyCosts(
+  baseline: Record<KmScaledCostKey, number>,
+  annualKm: number,
+): Record<KmScaledCostKey, number> {
+  const kmRatio = annualKm / BASELINE_ANNUAL_KM;
+
+  return {
+    registration: Math.round(baseline.registration),
+    fuel: Math.round(baseline.fuel * kmRatio),
+    servicing: Math.round(baseline.servicing * kmRatio),
+    tyres: Math.round(baseline.tyres * kmRatio),
+    battery: Math.round(baseline.battery * kmRatio),
+  };
+}
 
 const ROADSIDE_OPTIONS = [
   { value: 'total-care-1-2', label: 'Total Care (1-2 vehicles) $318', annualCost: 318 },
@@ -140,13 +180,15 @@ function calculateMonthlyLoanCost(form: EditCostsFormState): number {
 export function applyFormToRunningCosts(
   form: EditCostsFormState,
   currentData: RunningCostsData,
+  baselineData: RunningCostsData,
   viewAs: RunningCostsViewAs = 'monthly',
 ): RunningCostsData {
-  const registration = formAmountToMonthly(form.registration, viewAs);
-  const fuel = formAmountToMonthly(form.fuel, viewAs);
-  const servicing = formAmountToMonthly(form.servicing, viewAs);
-  const tyres = formAmountToMonthly(form.tyres, viewAs);
-  const battery = formAmountToMonthly(form.battery, viewAs);
+  const baseline = getBaselineMonthlyCosts(baselineData);
+  const { annualKm } = getKmBand(form.annualKmBand);
+  const { registration, fuel, servicing, tyres, battery } = calculateKmScaledMonthlyCosts(
+    baseline,
+    annualKm,
+  );
   const roadside = getRoadsideMonthlyCost(form.roadside);
   const insurance = formAmountToMonthly(form.insurance, viewAs);
 
@@ -170,20 +212,56 @@ export function applyFormToRunningCosts(
         ? { ...item, value: formatStoredAmount(lineItemAmounts[item.id]) }
         : item,
     ),
+    customizations: {
+      annualKmBand: form.annualKmBand,
+      hasFinance: form.hasFinance,
+      loanAmount: form.loanAmount,
+      interestRate: form.interestRate,
+      loanTerm: form.loanTerm,
+      roadside: form.roadside,
+    },
   };
 }
 
-function buildDefaultFormState(data: RunningCostsData, viewAs: RunningCostsViewAs): EditCostsFormState {
+function inferAnnualKmBand(data: RunningCostsData, baselineData: RunningCostsData): string {
+  const baselineFuel = getBaselineMonthlyCosts(baselineData).fuel;
+  const currentFuel = parseStoredAmount(getLineItemValue(data, 'fuel', String(baselineFuel)));
+
+  if (baselineFuel <= 0) return DEFAULT_ANNUAL_KM_BAND;
+
+  const inferredKm = BASELINE_ANNUAL_KM * (currentFuel / baselineFuel);
+  let closest = DEFAULT_ANNUAL_KM_BAND;
+  let minDiff = Infinity;
+
+  for (const band of ANNUAL_KM_BANDS) {
+    const diff = Math.abs(band.annualKm - inferredKm);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closest = band.value;
+    }
+  }
+
+  return closest;
+}
+
+function buildDefaultFormState(
+  data: RunningCostsData,
+  baselineData: RunningCostsData,
+  viewAs: RunningCostsViewAs,
+): EditCostsFormState {
+  if (data.customizations) {
+    return {
+      ...data.customizations,
+      insurance: monthlyToFormAmount(data.insuranceCost, viewAs),
+    };
+  }
+
   return {
     hasFinance: data.loanCost > 0 ? 'yes' : 'no',
     loanAmount: DEFAULT_LOAN_FORM.loanAmount,
     interestRate: DEFAULT_LOAN_FORM.interestRate,
     loanTerm: DEFAULT_LOAN_FORM.loanTerm,
-    registration: monthlyToFormAmount(parseStoredAmount(getLineItemValue(data, 'registration', '96')), viewAs),
-    fuel: monthlyToFormAmount(parseStoredAmount(getLineItemValue(data, 'fuel', '104')), viewAs),
-    servicing: monthlyToFormAmount(parseStoredAmount(getLineItemValue(data, 'servicing', '45')), viewAs),
-    tyres: monthlyToFormAmount(parseStoredAmount(getLineItemValue(data, 'tyres', '16')), viewAs),
-    battery: monthlyToFormAmount(parseStoredAmount(getLineItemValue(data, 'battery', '8')), viewAs),
+    annualKmBand: inferAnnualKmBand(data, baselineData),
     roadside: getRoadsideFromData(data),
     insurance: monthlyToFormAmount(data.insuranceCost, viewAs),
   };
@@ -213,16 +291,19 @@ function Field({
 
 export function EditRunningCostsPanel({
   data,
+  baselineData,
   viewAs,
   onClose,
   onUpdate,
 }: EditRunningCostsPanelProps) {
   const titleId = useId();
-  const [form, setForm] = useState<EditCostsFormState>(() => buildDefaultFormState(data, viewAs));
+  const [form, setForm] = useState<EditCostsFormState>(() =>
+    buildDefaultFormState(data, baselineData, viewAs),
+  );
 
   useEffect(() => {
-    setForm(buildDefaultFormState(data, viewAs));
-  }, [data, viewAs]);
+    setForm(buildDefaultFormState(data, baselineData, viewAs));
+  }, [data, baselineData, viewAs]);
 
   const [isFollowing, setIsFollowing] = useState(false);
   const [panelTop, setPanelTop] = useState<number | null>(null);
@@ -278,7 +359,7 @@ export function EditRunningCostsPanel({
   };
 
   const handleUpdate = () => {
-    onUpdate(applyFormToRunningCosts(form, data, viewAs));
+    onUpdate(applyFormToRunningCosts(form, data, baselineData, viewAs));
     onClose();
   };
 
@@ -396,64 +477,23 @@ export function EditRunningCostsPanel({
             <hr className="edit-costs-panel__divider" />
 
             <div className="edit-costs-panel__section">
-              <Field id="registration" label="Registration">
-                <input
-                  id="registration"
-                  className="edit-costs-panel__input"
-                  type="text"
-                  value={`$${form.registration}`}
-                  onChange={(event) =>
-                    updateField('registration', event.target.value.replace(/[^\d]/g, ''))
-                  }
-                />
-              </Field>
-
-              <Field id="fuel" label="Fuel / electricity">
-                <input
-                  id="fuel"
-                  className="edit-costs-panel__input"
-                  type="text"
-                  value={`$${form.fuel}`}
-                  onChange={(event) =>
-                    updateField('fuel', event.target.value.replace(/[^\d]/g, ''))
-                  }
-                />
-              </Field>
-
-              <Field id="servicing" label="Servicing">
-                <input
-                  id="servicing"
-                  className="edit-costs-panel__input"
-                  type="text"
-                  value={`$${form.servicing}`}
-                  onChange={(event) =>
-                    updateField('servicing', event.target.value.replace(/[^\d]/g, ''))
-                  }
-                />
-              </Field>
-
-              <Field id="tyres" label="Tyres">
-                <input
-                  id="tyres"
-                  className="edit-costs-panel__input"
-                  type="text"
-                  value={`$${form.tyres}`}
-                  onChange={(event) =>
-                    updateField('tyres', event.target.value.replace(/[^\d]/g, ''))
-                  }
-                />
-              </Field>
-
-              <Field id="battery" label="Battery">
-                <input
-                  id="battery"
-                  className="edit-costs-panel__input"
-                  type="text"
-                  value={`$${form.battery}`}
-                  onChange={(event) =>
-                    updateField('battery', event.target.value.replace(/[^\d]/g, ''))
-                  }
-                />
+              <Field
+                id="annual-km"
+                label="How many km&apos;s do you drive per year?"
+                helper="This will calculate your running costs based on the km&apos;s you drive per year"
+              >
+                <select
+                  id="annual-km"
+                  className="edit-costs-panel__select"
+                  value={form.annualKmBand}
+                  onChange={(event) => updateField('annualKmBand', event.target.value)}
+                >
+                  {ANNUAL_KM_BANDS.map((band) => (
+                    <option key={band.value} value={band.value}>
+                      {band.label}
+                    </option>
+                  ))}
+                </select>
               </Field>
 
               <Field id="roadside" label="RACV Emergency Roadside Assistance">

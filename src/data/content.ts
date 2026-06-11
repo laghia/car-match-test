@@ -492,11 +492,21 @@ export type RunningCostsLineItem = {
   linkHref?: string;
 };
 
+export type RunningCostsCustomizations = {
+  annualKmBand: string;
+  hasFinance: 'yes' | 'no';
+  loanAmount: string;
+  interestRate: string;
+  loanTerm: string;
+  roadside: string;
+};
+
 export type RunningCostsData = {
   loanCost: number;
   runningCost: number;
   insuranceCost: number;
   lineItems: RunningCostsLineItem[];
+  customizations?: RunningCostsCustomizations;
 };
 
 export type VehicleSpecRow = {

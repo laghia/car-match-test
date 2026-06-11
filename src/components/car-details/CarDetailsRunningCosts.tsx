@@ -87,6 +87,7 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
 
   useEffect(() => {
     setRunningCosts(data);
+    setIsEditPanelOpen(false);
   }, [data]);
 
   const multiplier = viewAs === 'monthly' ? 1 : 12;
@@ -265,6 +266,7 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
           <EditRunningCostsPanel
             key={viewAs}
             data={runningCosts}
+            baselineData={data}
             viewAs={viewAs}
             onClose={() => setIsEditPanelOpen(false)}
             onUpdate={setRunningCosts}
