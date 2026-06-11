@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { RunningCostsData } from '../../data/content';
 import { assetUrl } from '../../utils/baseUrl';
 import { Button } from '../Button';
@@ -20,14 +20,39 @@ const LINE_ITEM_ICONS: Record<string, string> = {
   roadside: assetUrl('/icons/running-costs/roadside.png'),
 };
 
-const COST_TOOLTIPS = {
-  'car-loan':
-    'Estimated monthly repayments for a RACV Car Loan based on the vehicle price and loan details.',
-  'running-costs':
-    'Estimated monthly running costs including registration, fuel, servicing, tyres, battery and roadside assistance.',
+const COST_TOOLTIPS: Record<string, ReactNode> = {
+  'car-loan': (
+    <>
+      Car loan cost is based on an RACV Car Loan on a 5 year term for the full purchase price.
+      <br />
+      <br />- New car loan from 6.89% p.a. (comparison rate from 7.59% p.a.
+      <sup>+</sup>).
+      <br />
+      <br />
+      Fees apply.
+      <sup>+</sup> See important information about the Comparison Rate
+    </>
+  ),
+  'running-costs': (
+    <>
+      Running costs are based on the latest vehicle-specific data and standard personal car usage, which
+      assumes you drive 15,000km per year and follow the manufacturer's recommended servicing schedule**.
+      We use the manufacturer's minimum recommended fuel type. Electricity usage assumes the vehicle is
+      charged predominately at home, with occasional public charging. For more information on how we
+      calculate the running costs, visit our{' '}
+      <a
+        href="https://www.racv.com.au/car-match/car-match-faqs.html#Whatareestimatedrunningcosts"
+        target="_blank"
+        rel="noreferrer"
+      >
+        FAQs page
+      </a>
+      .
+    </>
+  ),
   insurance:
     'Estimated monthly premium for RACV Car Insurance based on indicative pricing for this vehicle.',
-} as const;
+};
 
 function CostTooltip({ id, label }: { id: keyof typeof COST_TOOLTIPS; label: string }) {
   const tooltipId = `running-costs-tooltip-${id}`;
@@ -42,7 +67,13 @@ function CostTooltip({ id, label }: { id: keyof typeof COST_TOOLTIPS; label: str
       >
         <TooltipIcon />
       </button>
-      <span id={tooltipId} role="tooltip" className="running-costs__tooltip-content">
+      <span
+        id={tooltipId}
+        role="tooltip"
+        className={`running-costs__tooltip-content${
+          id === 'car-loan' || id === 'running-costs' ? ' running-costs__tooltip-content--wide' : ''
+        }`}
+      >
         {COST_TOOLTIPS[id]}
       </span>
     </span>

@@ -1,0 +1,114 @@
+.roadside-select {
+  position: relative;
+  width: 100%;
+}
+
+.roadside-select__trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid var(--field-border);
+  border-radius: 12px;
+  background: var(--field-bg);
+  color: var(--text-03);
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.roadside-select__trigger:focus {
+  outline: 2px solid var(--link);
+  outline-offset: 0;
+  border-color: var(--link);
+}
+
+.roadside-select__value {
+  flex: 1;
+  min-width: 0;
+}
+
+.roadside-signal {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.roadside-signal__bar {
+  width: 4px;
+  border-radius: 2px 2px 1px 1px;
+}
+
+.roadside-signal__bar--1 {
+  height: 8px;
+}
+
+.roadside-signal__bar--2 {
+  height: 11px;
+}
+
+.roadside-signal__bar--3 {
+  height: 16px;
+}
+
+.roadside-signal__bar--filled {
+  background: var(--link);
+}
+
+.roadside-signal__bar--outline {
+  background: transparent;
+  border: 1.5px solid var(--link);
+  box-sizing: border-box;
+}
+
+.roadside-select__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+  border: 1px solid var(--field-border);
+  border-radius: 12px;
+  background: var(--ui-01);
+  box-shadow: var(--shadow-card);
+}
+
+.roadside-select__option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-03);
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.roadside-select__option:hover,
+.roadside-select__option:focus-visible {
+  background: var(--ui-02);
+  outline: none;
+}
+
+.roadside-select__option--selected {
+  background: var(--ui-02);
+}
+
+.roadside-select__option-label {
+  flex: 1;
+  min-width: 0;
+}

@@ -1,7 +1,12 @@
 import { useEffect, useId, useState } from 'react';
 import type { RunningCostsData } from '../../data/content';
 import { Button } from '../Button';
-import { CrossIcon } from '../Icons';
+import { CrossIcon, TooltipIcon } from '../Icons';
+import { RoadsideAssistanceSelect } from './RoadsideAssistanceSelect';
+import {
+  getRoadsideMonthlyCost,
+  ROADSIDE_ASSISTANCE_OPTIONS,
+} from './roadsideAssistanceOptions';
 import './EditRunningCostsPanel.css';
 
 export type RunningCostsViewAs = 'monthly' | 'annual';
@@ -67,21 +72,8 @@ function calculateKmScaledMonthlyCosts(
   };
 }
 
-const ROADSIDE_OPTIONS = [
-  { value: 'total-care-1-2', label: 'Total Care (1-2 vehicles) $318', annualCost: 318 },
-  { value: 'total-care-3-5', label: 'Total Care (3-5 vehicles) $411', annualCost: 411 },
-  { value: 'extra-care-1', label: 'Extra Care (1 vehicle) $229', annualCost: 229 },
-  { value: 'extra-care-2', label: 'Extra Care (2 vehicles) $301', annualCost: 301 },
-  { value: 'roadside-care-1', label: 'Roadside Care (1 vehicle) $138', annualCost: 138 },
-  { value: 'roadside-care-2', label: 'Roadside Care (2 vehicles) $276', annualCost: 276 },
-] as const;
-
-function getRoadsideOption(value: string) {
-  return ROADSIDE_OPTIONS.find((item) => item.value === value) ?? ROADSIDE_OPTIONS[0];
-}
-
-function getRoadsideMonthlyCost(value: string): number {
-  return getRoadsideOption(value).annualCost / 12;
+function getRoadsideMonthlyCostFromForm(value: string): number {
+  return getRoadsideMonthlyCost(value);
 }
 
 function formAmountToMonthly(value: string, viewAs: RunningCostsViewAs): number {
@@ -121,16 +113,18 @@ function getLineItemValue(data: RunningCostsData, id: string, fallback: string):
 function getRoadsideFromData(data: RunningCostsData): EditCostsFormState['roadside'] {
   const amount = parseStoredAmount(getLineItemValue(data, 'roadside', '0'));
 
-  let closest: string = ROADSIDE_OPTIONS[0].value;
+  let closest = ROADSIDE_ASSISTANCE_OPTIONS[0].value;
   let minDiff = Infinity;
-  for (const option of ROADSIDE_OPTIONS) {
-    const monthly = getRoadsideMonthlyCost(option.value);
+
+  for (const option of ROADSIDE_ASSISTANCE_OPTIONS) {
+    const monthly = option.annualCost / 12;
     const diff = Math.abs(monthly - amount);
     if (diff < minDiff) {
       minDiff = diff;
       closest = option.value;
     }
   }
+
   return closest;
 }
 
@@ -189,7 +183,7 @@ export function applyFormToRunningCosts(
     baseline,
     annualKm,
   );
-  const roadside = getRoadsideMonthlyCost(form.roadside);
+  const roadside = getRoadsideMonthlyCostFromForm(form.roadside);
   const insurance = formAmountToMonthly(form.insurance, viewAs);
 
   const lineItemAmounts: Record<string, number> = {
@@ -267,22 +261,47 @@ function buildDefaultFormState(
   };
 }
 
+function FieldLabelTooltip({ label, text }: { label: string; text: string }) {
+  const tooltipId = useId();
+
+  return (
+    <span className="edit-costs-panel__tooltip">
+      <button
+        type="button"
+        className="edit-costs-panel__tooltip-trigger"
+        aria-label={`More information about ${label}`}
+        aria-describedby={tooltipId}
+      >
+        <TooltipIcon />
+      </button>
+      <span id={tooltipId} role="tooltip" className="edit-costs-panel__tooltip-content">
+        {text}
+      </span>
+    </span>
+  );
+}
+
 function Field({
   id,
   label,
   helper,
+  labelTooltip,
   children,
 }: {
   id: string;
   label: string;
   helper?: string;
+  labelTooltip?: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="edit-costs-panel__field">
-      <label className="edit-costs-panel__label" htmlFor={id}>
-        {label}
-      </label>
+      <div className="edit-costs-panel__label-row">
+        <label className="edit-costs-panel__label" htmlFor={id}>
+          {label}
+        </label>
+        {labelTooltip && <FieldLabelTooltip label={label} text={labelTooltip} />}
+      </div>
       {helper && <p className="edit-costs-panel__helper">{helper}</p>}
       {children}
     </div>
@@ -496,19 +515,16 @@ export function EditRunningCostsPanel({
                 </select>
               </Field>
 
-              <Field id="roadside" label="RACV Emergency Roadside Assistance">
-                <select
+              <Field
+                id="roadside"
+                label="RACV Emergency Roadside Assistance"
+                labelTooltip="If Total Care is selected keep in mind an additional vehicle can be added with no extra cost"
+              >
+                <RoadsideAssistanceSelect
                   id="roadside"
-                  className="edit-costs-panel__select"
                   value={form.roadside}
-                  onChange={(event) => updateField('roadside', event.target.value)}
-                >
-                  {ROADSIDE_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(value) => updateField('roadside', value)}
+                />
               </Field>
 
               <Field
