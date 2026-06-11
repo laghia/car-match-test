@@ -1,4 +1,7 @@
 .car-details-tabs {
+  position: sticky;
+  top: var(--header-height);
+  z-index: 60;
   width: 100%;
   border-bottom: 1px solid var(--border-01);
   background: var(--ui-01);

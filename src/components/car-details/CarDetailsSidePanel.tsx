@@ -94,7 +94,7 @@ export function CarDetailsSidePanel({
             </dt>
             <dd>
               <span>{ancapYear}</span>
-              <StarRating count={ancapStars} />
+              {ancapStars > 0 && <StarRating count={ancapStars} />}
             </dd>
           </div>
         )}

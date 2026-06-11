@@ -12,43 +12,33 @@ type VehicleCardProps = {
 export function VehicleCard({ vehicle }: VehicleCardProps) {
   return (
     <article className="vehicle-card">
-      <div className="vehicle-card__media">
-        <div className="vehicle-card__image-wrap">
-          <img src={vehicle.image} alt="" loading="lazy" />
+      <div className="vehicle-card__upper">
+        <div className="vehicle-card__media">
+          <div className="vehicle-card__image-wrap">
+            <img src={vehicle.image} alt="" loading="lazy" />
+          </div>
+          {vehicle.badge && (
+            <span className="vehicle-card__badge">{vehicle.badge}</span>
+          )}
+          <button type="button" className="vehicle-card__shortlist" aria-label="Add to shortlist">
+            <HeartOutlineIcon />
+          </button>
         </div>
-        {vehicle.badge && (
-          <span className="vehicle-card__badge">{vehicle.badge}</span>
-        )}
-        <button type="button" className="vehicle-card__shortlist" aria-label="Add to shortlist">
-          <HeartOutlineIcon />
-        </button>
-      </div>
 
-      <div className="vehicle-card__body">
-        <div className="vehicle-card__summary">
+        <div className="vehicle-card__content-top">
           <h3 className="vehicle-card__title">{vehicle.title}</h3>
           <p className="vehicle-card__variant">{vehicle.variant}</p>
-          <div className="vehicle-card__price-row">
-            <div className="vehicle-card__price-lockup">
-              <p className="vehicle-card__price">
-                {vehicle.price}
-                <sup>*</sup>
-              </p>
-              <p className="vehicle-card__driveaway">Estimated VIC drive-away</p>
-            </div>
-            <div className="vehicle-card__rating" aria-label="RACV Review">
-              <img
-                className="vehicle-card__rating-logo"
-                src="/racv-rating-logo.svg"
-                alt=""
-                width={37}
-                height={20}
-              />
-              <span className="vehicle-card__rating-label">Review</span>
-            </div>
+          <div className="vehicle-card__price-lockup">
+            <p className="vehicle-card__price">
+              {vehicle.price}
+              <sup>*</sup>
+            </p>
+            <p className="vehicle-card__driveaway">Estimated VIC drive-away</p>
           </div>
         </div>
+      </div>
 
+      <div className="vehicle-card__bottom">
         <div className="vehicle-card__specs">
           <div className="vehicle-card__spec">
             <span className="vehicle-card__spec-label">Type</span>

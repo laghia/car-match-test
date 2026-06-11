@@ -30,8 +30,10 @@
   --family-heading: 'Poppins', system-ui, sans-serif;
   --family-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
   --max-width: 1248px;
+  --page-max-width: 1440px;
   --page-gutter: 96px;
   --header-height: 98px;
+  --car-details-tabs-height: 57px;
   --shadow-card: 0 4px 8px 0 rgba(21, 21, 21, 0.12), 0 1px 2px 0 rgba(21, 21, 21, 0.08);
 }
 
@@ -120,4 +122,10 @@ select {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --car-details-tabs-height: 47px;
+  }
 }

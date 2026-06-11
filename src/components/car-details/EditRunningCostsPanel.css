@@ -1,0 +1,210 @@
+.edit-costs-panel,
+.edit-costs-panel__spacer {
+  --edit-panel-content-width: 500px;
+  --edit-panel-width: calc(var(--edit-panel-content-width));
+  --edit-panel-height: calc(100vh - var(--header-height) - var(--car-details-tabs-height));
+  --edit-panel-max-height: min(900px, var(--edit-panel-height));
+}
+
+.edit-costs-panel__spacer {
+  flex: 0 0 var(--edit-panel-width);
+  width: var(--edit-panel-width);
+}
+
+.edit-costs-panel {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  right: 0;
+  width: var(--edit-panel-width);
+  height: var(--edit-panel-height);
+  max-height: var(--edit-panel-max-height);
+  z-index: 50;
+  background: var(--ui-01);
+  border-left: 1px solid var(--border-01);
+}
+
+.edit-costs-panel__header,
+.edit-costs-panel__body,
+.edit-costs-panel__footer {
+  max-width: var(--edit-panel-content-width);
+}
+
+.edit-costs-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-shrink: 0;
+  padding: 32px 32px 10px;
+}
+
+.edit-costs-panel__title {
+  font-family: var(--family-heading);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 36px;
+  letter-spacing: 0;
+  color: var(--interactive-01-secondary-dark);
+}
+
+.edit-costs-panel__period {
+  font-weight: 400;
+  font-size: 18px;
+}
+
+.edit-costs-panel__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--link);
+  cursor: pointer;
+}
+
+.edit-costs-panel__close:hover {
+  background: var(--ui-02);
+}
+
+.edit-costs-panel__body {
+  flex: 1;
+  min-height: 0;
+  padding: 0 32px 24px;
+}
+
+.edit-costs-panel--following .edit-costs-panel__body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.edit-costs-panel__form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.edit-costs-panel__section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.edit-costs-panel__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.edit-costs-panel__label {
+  font-family: var(--family-heading);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0;
+  color: var(--field-label);
+}
+
+.edit-costs-panel__helper {
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 0.25px;
+  color: var(--text-04);
+}
+
+.edit-costs-panel__input,
+.edit-costs-panel__select {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid var(--field-border);
+  border-radius: 12px;
+  background: var(--field-bg);
+  color: var(--text-03);
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+}
+
+.edit-costs-panel__select {
+  appearance: none;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%230067F6' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  cursor: pointer;
+}
+
+.edit-costs-panel__input:focus,
+.edit-costs-panel__select:focus {
+  outline: 2px solid var(--link);
+  outline-offset: 0;
+  border-color: var(--link);
+}
+
+.edit-costs-panel__link {
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+  color: var(--link);
+  text-decoration: underline;
+}
+
+.edit-costs-panel__radios {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 8px 0;
+}
+
+.edit-costs-panel__radio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.25px;
+  color: var(--text-03);
+  cursor: pointer;
+}
+
+.edit-costs-panel__radio input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--link);
+  cursor: pointer;
+}
+
+.edit-costs-panel__divider {
+  width: 100%;
+  height: 1px;
+  border: none;
+  background: var(--border-01);
+}
+
+.edit-costs-panel__footer {
+  flex-shrink: 0;
+  padding: 12px 24px 24px;
+  border-top: 1px solid var(--border-01);
+  background: var(--ui-01);
+}
+
+.edit-costs-panel__footer .btn {
+  width: 100%;
+}
+
+@media (max-width: 1279px) {
+  .edit-costs-panel,
+  .edit-costs-panel__spacer {
+    --edit-panel-width: min(var(--edit-panel-content-width), 100%);
+    --edit-panel-max-height: none;
+  }
+
+  .edit-costs-panel__spacer {
+    display: none;
+  }
+}

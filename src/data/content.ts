@@ -223,6 +223,9 @@ export type VehicleResult = {
   engine: string;
   image: string;
   badge?: string;
+  makeSlug?: string;
+  modelSlug?: string;
+  variantSlug?: string;
 };
 
 export type RelatedCarYearTag = 'current-model' | 'coming-soon';
@@ -359,22 +362,28 @@ export const electricSearchResults: VehicleResult[] = [
 export const defaultSearchResults: VehicleResult[] = [
   {
     id: 1,
-    title: '2024 Toyota RAV4 Cruiser',
-    variant: '2.5 Hybrid AWD E-CVT',
-    price: '$52,700',
-    fuelType: 'Petrol (hybrid electric)',
-    engine: '233kW automatic AWD',
-    image: `${RACV}/content/dam/racv-assets/images/images/motor/car-match/1600x900/green-mg-1600x900.jpg`,
-    badge: 'Hybrid',
+    title: '2026 Chery Tiggo 4 Ultimate',
+    variant: '1.5 Turbo Ultimate CVT',
+    price: '$29,050',
+    fuelType: 'Petrol',
+    engine: '108kW automatic FWD',
+    image: '/chery-tiggo-4-card.png',
+    makeSlug: 'chery',
+    modelSlug: 'tiggo-4',
+    variantSlug: 'ultimate-8448836f0465815247e42d2961a082dcdc2bda6',
   },
   {
     id: 2,
-    title: '2026 Ford Everest Active',
-    variant: '2.0L Bi-Turbo Diesel 4WD',
-    price: '$58,990',
-    fuelType: 'Diesel',
-    engine: '154kW automatic 4WD',
-    image: `${RACV}/content/dam/racv-assets/images/images/content-hub/transport/2026-cars/ford/ford-everest/ford-everest-active/banners-and-thumbnails/2026-Ford-Everest-Active-thumbnail-900x600.jpg.transform/imageDesktop/image.jpg`,
+    title: '2025 Toyota Corolla Ascent Sport',
+    variant: '1.8 Ascent Sport Hybrid e-CVT',
+    price: '$36,469',
+    fuelType: 'Petrol (hybrid electric)',
+    engine: '103kW automatic FWD',
+    image: `${RACV}/content/dam/racv-assets/images/icons/car-match/hybrid-420x280.jpg`,
+    badge: 'Hybrid',
+    makeSlug: 'toyota',
+    modelSlug: 'corolla',
+    variantSlug: 'ascent-sport-1-8-ascent-sport-hybrid-e-cvt-2',
   },
   {
     id: 3,
@@ -475,7 +484,6 @@ export type CarDetailsFuelFilter = {
 
 export type RunningCostsLineItem = {
   id: string;
-  icon: string;
   label: string;
   value: string;
   footnote?: string;
@@ -487,6 +495,7 @@ export type RunningCostsLineItem = {
 export type RunningCostsData = {
   loanCost: number;
   runningCost: number;
+  insuranceCost: number;
   lineItems: RunningCostsLineItem[];
 };
 
@@ -537,40 +546,34 @@ export type CarDetails = {
 const defaultRunningCostLineItems: RunningCostsLineItem[] = [
   {
     id: 'registration',
-    icon: '🪪',
-    label: 'Victorian registration',
+    label: 'Registration',
     value: '$96',
   },
   {
     id: 'fuel',
-    icon: '⛽',
     label: 'Fuel / electricity',
     value: '$104',
     valueFootnote: '^',
   },
   {
     id: 'servicing',
-    icon: '🔧',
     label: 'Servicing',
     value: '$45',
   },
   {
     id: 'tyres',
-    icon: '🛞',
     label: 'Tyres',
     value: '$16',
   },
   {
     id: 'battery',
-    icon: '🔋',
     label: 'Battery',
     value: '$8',
     valueFootnote: '^',
   },
   {
     id: 'roadside',
-    icon: '🚐',
-    label: 'RACV Extra Care Roadside Assistance',
+    label: 'RACV Extra Car Roadside Assistance',
     footnote: '#',
     value: '$18',
     linkLabel: 'Join now',
@@ -579,46 +582,39 @@ const defaultRunningCostLineItems: RunningCostsLineItem[] = [
 
 const cheryRunningCosts: RunningCostsData = {
   loanCost: 574,
-  runningCost: 314,
+  runningCost: 313,
+  insuranceCost: 208,
   lineItems: [
     {
       id: 'registration',
-      icon: '🪪',
       label: 'Victorian registration',
       value: '$78',
     },
     {
       id: 'fuel',
-      icon: '⛽',
       label: 'Fuel / electricity',
       value: '$165',
-      valueFootnote: '^',
     },
     {
       id: 'servicing',
-      icon: '🔧',
       label: 'Servicing',
       value: '$25',
     },
     {
       id: 'tyres',
-      icon: '🛞',
       label: 'Tyres',
       value: '$18',
     },
     {
       id: 'battery',
-      icon: '🔋',
       label: 'Battery',
       value: '$8',
-      valueFootnote: '^',
     },
     {
       id: 'roadside',
-      icon: '🚐',
-      label: 'RACV Extra Care Roadside Assistance',
+      label: 'RACV Emergency Roadside Assistance',
       footnote: '#',
-      value: '$20',
+      value: '$19',
       linkLabel: 'Join now',
     },
   ],
@@ -627,16 +623,8 @@ const cheryRunningCosts: RunningCostsData = {
 const rav4RunningCosts: RunningCostsData = {
   loanCost: 1385,
   runningCost: 440,
-  lineItems: [
-    {
-      id: 'insurance',
-      icon: '🚗',
-      label: 'RACV Comprehensive Car Insurance***',
-      value: 'N/A',
-      linkLabel: 'Get a quote',
-    },
-    ...defaultRunningCostLineItems,
-  ],
+  insuranceCost: 208,
+  lineItems: defaultRunningCostLineItems,
 };
 
 const featureAccordions: VehicleSpecAccordion[] = [
@@ -743,7 +731,7 @@ const cheryVehicleSpecs: VehicleSpecsData = {
     { label: 'Fuel Type', value: 'Petrol' },
     { label: 'Power / torque', value: '108kW/210Nm' },
     { label: 'Transmission', value: 'automatic' },
-    { label: 'Drive wheels', value: 'FWD' },
+    { label: 'Drive wheels', value: 'Front' },
     { label: 'Engine size', value: '1.5L' },
     { label: 'Towing capacity (braked)', value: '750kg' },
     { label: 'Fuel consumption (combined)', value: '7.1L/100km (WLTP)', footnote: '†' },
@@ -781,11 +769,60 @@ const rav4VehicleSpecs: VehicleSpecsData = {
 };
 
 const cheryTiggoImages = [
+  '/chery-tiggo-4-card.png',
+  '/chery-tiggo-4-card.png',
+  '/chery-tiggo-4-card.png',
+  '/chery-tiggo-4-card.png',
+];
+
+const corollaImages = [
+  `${RACV}/content/dam/racv-assets/images/icons/car-match/hybrid-420x280.jpg`,
   `${RACV}/content/dam/racv-assets/images/images/motor/car-match/1600x900/green-mg-1600x900.jpg`,
   `${RACV}/content/dam/racv-assets/images/images/content-hub/transport/2026-cars/ford/ford-everest/ford-everest-active/banners-and-thumbnails/2026-Ford-Everest-Active-thumbnail-900x600.jpg.transform/imageDesktop/image.jpg`,
-  `${RACV}/content/dam/racv-assets/images/images/content-hub/transport/2026-cars/byd/byd-shark-6/shark-6-performance/banners-and-thumbnails/2026-BYD-Shark-6-Performance-thumbnail-900x600.jpg.transform/imageDesktop/image.jpg`,
   `${RACV}/content/dam/racv-assets/images/icons/car-match/electric-420x280.jpg`,
 ];
+
+const corollaRunningCosts: RunningCostsData = {
+  loanCost: 725,
+  runningCost: 268,
+  insuranceCost: 195,
+  lineItems: [
+    { id: 'registration', label: 'Victorian registration', value: '$72' },
+    { id: 'fuel', label: 'Fuel / electricity', value: '$98' },
+    { id: 'servicing', label: 'Servicing', value: '$42' },
+    { id: 'tyres', label: 'Tyres', value: '$28' },
+    { id: 'battery', label: 'Battery', value: '$9' },
+    {
+      id: 'roadside',
+      label: 'RACV Emergency Roadside Assistance',
+      footnote: '#',
+      value: '$19',
+      linkLabel: 'Join now',
+    },
+  ],
+};
+
+const corollaVehicleSpecs: VehicleSpecsData = {
+  overview: [
+    { label: 'Body type', value: 'Hatchback' },
+    { label: 'Number of doors', value: '5' },
+    { label: 'Number of seats', value: '5' },
+    { label: 'Fuel Type', value: 'Hybrid' },
+    { label: 'Power / torque', value: '103kW/185Nm' },
+    { label: 'Transmission', value: 'automatic' },
+    { label: 'Drive wheels', value: 'Front' },
+    { label: 'Engine size', value: '1.8L' },
+    { label: 'Towing capacity (braked)', value: '—' },
+    { label: 'Fuel consumption (combined)', value: '4.2L/100km (WLTP)', footnote: '†' },
+    { label: 'CO2 emissions (combined)', value: '96g/km (WLTP)', footnote: '†' },
+    { label: 'Warranty', value: '5 Years/unlimited km' },
+    { label: 'Capped price service', value: '1 years/15,000km' },
+    { label: 'Safety rating', value: 'Not tested' },
+    { label: 'Build country', value: 'Japan' },
+  ],
+  features: featureAccordions,
+  specifications: specificationAccordions,
+};
 
 const relatedCarsMock: RelatedCar[] = [
   {
@@ -917,57 +954,153 @@ const cheryTiggoMock: CarDetails = {
   makeSlug: 'chery',
   modelSlug: 'tiggo-4',
   variantSlug: 'ultimate-8448836f0465815247e42d2961a082dcdc2bda6',
-  year: 2025,
-  title: '2025 Chery Tiggo 4 Ultimate',
-  variant: '1.5 Turbo CVT',
-  price: '$29,990',
-  monthlyRepayment: '$542',
+  year: 2026,
+  title: '2026 Chery Tiggo 4 Ultimate',
+  variant: '1.5 Turbo Ultimate CVT',
+  price: '$29,050',
+  monthlyRepayment: '$574',
   images: cheryTiggoImages,
-  moreImagesCount: 12,
-  ancapYear: '2024',
+  moreImagesCount: 9,
+  ancapYear: '2023',
   ancapStars: 5,
   runningCosts: cheryRunningCosts,
   vehicleSpecs: cheryVehicleSpecs,
   specs: [
     { label: 'Fuel type', value: 'Petrol' },
-    { label: 'Drive wheels', value: 'FWD' },
+    { label: 'Drive wheels', value: 'Front' },
     { label: 'Body type', value: 'SUV' },
     { label: 'Seats', value: '5 seats' },
     { label: 'Transmission', value: 'Automatic' },
-    { label: 'Power', value: '108kW' },
-    { label: 'Towing capacity', value: '750kg' },
+    { label: 'Power / torque', value: '108kW' },
+    { label: 'Engine', value: '1.5L turbo 4-Cylinder' },
+    { label: 'Towing capacity (braked)', value: '—' },
   ],
   fuelFilters: [
     { id: 'all', label: 'All', active: true },
-    { id: 'petrol', label: 'Petrol (4)' },
+    { id: 'petrol', label: 'Petrol (2)' },
+    { id: 'hybrid', label: 'Hybrid (2)' },
   ],
   variantCount: 4,
-  yearOptions: [2025, 2024],
+  yearOptions: [2026, 2025],
   selectedVariantId: 'ultimate',
   variants: [
     {
       id: 'ultimate',
       trim: 'Ultimate',
+      price: '$29,050',
+      engine: '1.5 Turbo Ultimate CVT',
+    },
+    {
+      id: 'urban',
+      trim: 'Urban',
+      price: '$24,990',
+      engine: '1.5 Turbo Urban CVT',
+    },
+    {
+      id: 'hybrid-ultimate',
+      trim: 'Hybrid Ultimate',
+      price: '$32,990',
+      engine: '1.5 Hybrid Ultimate CVT',
+      isHybrid: true,
+    },
+    {
+      id: 'hybrid-urban',
+      trim: 'Hybrid Urban',
       price: '$29,990',
-      engine: '1.5 Turbo CVT',
+      engine: '1.5 Hybrid Urban CVT',
+      isHybrid: true,
+    },
+  ],
+  relatedCars: relatedCarsMock,
+};
+
+const corollaMock: CarDetails = {
+  make: 'Toyota',
+  model: 'Corolla',
+  makeSlug: 'toyota',
+  modelSlug: 'corolla',
+  variantSlug: 'ascent-sport-1-8-ascent-sport-hybrid-e-cvt-2',
+  year: 2025,
+  title: '2025 Toyota Corolla Ascent Sport',
+  variant: '1.8 Ascent Sport Hybrid e-CVT',
+  price: '$36,469',
+  monthlyRepayment: '$725',
+  images: corollaImages,
+  moreImagesCount: 15,
+  ancapYear: 'Not tested',
+  ancapStars: 0,
+  runningCosts: corollaRunningCosts,
+  vehicleSpecs: corollaVehicleSpecs,
+  specs: [
+    { label: 'Fuel type', value: 'Hybrid' },
+    { label: 'Drive wheels', value: 'Front' },
+    { label: 'Body type', value: 'Hatchback' },
+    { label: 'Seats', value: '5 seats' },
+    { label: 'Transmission', value: 'Automatic' },
+    { label: 'Power / torque', value: '103kW' },
+    { label: 'Engine', value: '1.8L - 4-Cylinder' },
+    { label: 'Towing capacity (braked)', value: '—' },
+  ],
+  fuelFilters: [
+    { id: 'all', label: 'All', active: true },
+    { id: 'hybrid', label: 'Hybrid (6)' },
+    { id: 'petrol', label: 'Petrol (2)' },
+  ],
+  variantCount: 8,
+  yearOptions: [2025, 2024],
+  selectedVariantId: 'ascent-sport-hybrid-hatch',
+  variants: [
+    {
+      id: 'ascent-sport-hybrid-hatch',
+      trim: 'Ascent Sport',
+      price: '$36,469',
+      engine: '1.8 Ascent Sport Hybrid e-CVT',
+      isHybrid: true,
     },
     {
-      id: 'pro',
-      trim: 'Pro',
-      price: '$27,490',
-      engine: '1.5 Turbo CVT',
+      id: 'ascent-sport-hybrid-sedan',
+      trim: 'Ascent Sport',
+      price: '$33,899',
+      engine: '1.8 Ascent Sport Hybrid e-CVT',
+      isHybrid: true,
     },
     {
-      id: 'elite',
-      trim: 'Elite',
-      price: '$25,990',
-      engine: '1.5 Turbo CVT',
+      id: 'gts-awd',
+      trim: 'GTS',
+      price: '$68,764',
+      engine: '1.6 Turbo GR GTS AWD',
     },
     {
-      id: 'city',
-      trim: 'City',
-      price: '$23,990',
-      engine: '1.5 CVT',
+      id: 'gts-auto-awd',
+      trim: 'GTS',
+      price: '$71,256',
+      engine: '1.6 Turbo GR GTS Auto AWD',
+    },
+    {
+      id: 'sx-hybrid-hatch',
+      trim: 'SX',
+      price: '$37,129',
+      engine: '1.8 SX Hybrid e-CVT',
+      isHybrid: true,
+    },
+    {
+      id: 'sx-hybrid-sedan',
+      trim: 'SX',
+      price: '$39,621',
+      engine: '1.8 SX Hybrid e-CVT',
+      isHybrid: true,
+    },
+    {
+      id: 'ascent-sport-petrol-hatch',
+      trim: 'Ascent Sport',
+      price: '$31,490',
+      engine: '2.0 Ascent Sport Petrol CVT',
+    },
+    {
+      id: 'ascent-sport-petrol-sedan',
+      trim: 'Ascent Sport',
+      price: '$32,290',
+      engine: '2.0 Ascent Sport Petrol CVT',
     },
   ],
   relatedCars: relatedCarsMock,
@@ -976,6 +1109,7 @@ const cheryTiggoMock: CarDetails = {
 const carDetailsByKey: Record<string, CarDetails> = {
   'chery/tiggo-4': cheryTiggoMock,
   'toyota/rav4': rav4Mock,
+  'toyota/corolla': corollaMock,
 };
 
 export function getCarDetails(
@@ -983,16 +1117,18 @@ export function getCarDetails(
   modelSlug: string,
   variantSlug: string,
 ): CarDetails {
-  const key = `${makeSlug}/${modelSlug}`;
-  const base = carDetailsByKey[key] ?? rav4Mock;
+  const normalizedMake = makeSlug.toLowerCase();
+  const normalizedModel = modelSlug.toLowerCase();
+  const key = `${normalizedMake}/${normalizedModel}`;
+  const base = carDetailsByKey[key] ?? cheryTiggoMock;
 
   return {
     ...base,
-    makeSlug,
-    modelSlug,
+    makeSlug: normalizedMake,
+    modelSlug: normalizedModel,
     variantSlug,
-    make: base.makeSlug === makeSlug ? base.make : titleCase(makeSlug),
-    model: base.modelSlug === modelSlug ? base.model : titleCase(modelSlug.replace(/-/g, ' ')),
+    make: base.makeSlug === normalizedMake ? base.make : titleCase(normalizedMake),
+    model: base.modelSlug === normalizedModel ? base.model : titleCase(normalizedModel.replace(/-/g, ' ')),
   };
 }
 
@@ -1005,9 +1141,13 @@ function titleCase(value: string): string {
 }
 
 export function getVehicleDetailsPath(vehicle: VehicleResult): string {
+  if (vehicle.makeSlug && vehicle.modelSlug && vehicle.variantSlug) {
+    return buildCarDetailsUrl(vehicle.makeSlug, vehicle.modelSlug, vehicle.variantSlug);
+  }
+
   const titleParts = vehicle.title.split(' ');
   const make = titleParts[1] ?? 'car';
-  const model = titleParts.slice(2).join(' ') || 'model';
+  const model = titleParts.slice(2, -1).join(' ') || 'model';
   const variantSlug = `${vehicle.variant.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${vehicle.id}`;
 
   return buildCarDetailsUrl(make, model, variantSlug);
