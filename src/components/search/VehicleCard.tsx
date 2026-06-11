@@ -52,7 +52,7 @@ export function VehicleCard({ vehicle }: VehicleCardProps) {
 
         <Link to={getVehicleDetailsPath(vehicle)} className="vehicle-card__cta-link">
           <Button variant="digital-primary" fullWidth>
-            View details
+            Check costs and details
           </Button>
         </Link>
       </div>
