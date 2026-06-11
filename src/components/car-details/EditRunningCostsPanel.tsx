@@ -517,7 +517,7 @@ export function EditRunningCostsPanel({
                 helper={
                   viewAs === 'annual'
                     ? 'Enter your yearly cost or quote number. E.g. REQ12345'
-                    : 'Enter your monthly cost or quote number. E.g. REQ12345'
+                    : 'Enter your yearly cost or quote number. E.g. REQ12345'
                 }
               >
                 <input

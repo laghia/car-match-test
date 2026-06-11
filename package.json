@@ -10,6 +10,7 @@
     "deploy": "node scripts/deploy-pages.mjs",
     "setup:github": "node scripts/setup-github.mjs",
     "preview:pages": "vite preview --mode pages",
+    "password:hash": "node scripts/hash-password.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

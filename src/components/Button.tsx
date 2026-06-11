@@ -8,6 +8,7 @@ type ButtonProps = {
   type?: 'button' | 'submit';
   className?: string;
   fullWidth?: boolean;
+  disabled?: boolean;
 };
 
 export function Button({
@@ -18,12 +19,14 @@ export function Button({
   type = 'button',
   className = '',
   fullWidth = false,
+  disabled = false,
 }: ButtonProps) {
   return (
     <button
       type={type}
       className={`btn btn--${variant} ${size === 'small' ? 'btn--small' : ''} ${fullWidth ? 'btn--full' : ''} ${className}`}
       onClick={onClick}
+      disabled={disabled}
     >
       <span className="btn__text">{children}</span>
     </button>
