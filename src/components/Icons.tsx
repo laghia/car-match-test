@@ -202,6 +202,18 @@ export function CrossIcon() {
   );
 }
 
+export function TooltipIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle cx="8" cy="8" r="8" fill="#0067F6" />
+      <path
+        d="M8 11.375a.625.625 0 1 0 0 1.25.625.625 0 0 0 0-1.25ZM8 4.375c-1.036 0-1.875.656-1.875 1.625a.625.625 0 1 0 1.25 0c0-.172.281-.375.625-.625.344-.25.781 0 .781.625 0 .375-.281.625-.625.875-.469.281-.781.781-.781 1.375v.125a.625.625 0 1 0 1.25 0v-.125c0-.313.156-.469.469-.625.656-.344 1.031-.906 1.031-1.75 0-1.172-.969-1.875-2.156-1.875Z"
+        fill="#fff"
+      />
+    </svg>
+  );
+}
+
 export function PlusIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">

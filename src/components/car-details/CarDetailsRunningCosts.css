@@ -151,11 +151,68 @@
   color: var(--text-03);
 }
 
-.running-costs__help {
-  display: block;
+.running-costs__tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.running-costs__tooltip-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 16px;
   height: 16px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
   flex-shrink: 0;
+}
+
+.running-costs__tooltip-trigger:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+.running-costs__tooltip-content {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  z-index: 10;
+  width: max-content;
+  max-width: 240px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: var(--interactive-01-secondary-dark);
+  color: var(--ui-01);
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: 0.25px;
+  text-align: left;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+}
+
+.running-costs__tooltip-content::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--interactive-01-secondary-dark);
+}
+
+.running-costs__tooltip:hover .running-costs__tooltip-content,
+.running-costs__tooltip:focus-within .running-costs__tooltip-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
 
 .running-costs__amount {

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { RunningCostsData } from '../../data/content';
 import { assetUrl } from '../../utils/baseUrl';
 import { Button } from '../Button';
-import { ChevronDownIcon } from '../Icons';
+import { ChevronDownIcon, TooltipIcon } from '../Icons';
 import { EditRunningCostsPanel } from './EditRunningCostsPanel';
 import './CarDetailsRunningCosts.css';
 
@@ -20,16 +20,32 @@ const LINE_ITEM_ICONS: Record<string, string> = {
   roadside: assetUrl('/icons/running-costs/roadside.png'),
 };
 
-function HelpIcon() {
+const COST_TOOLTIPS = {
+  'car-loan':
+    'Estimated monthly repayments for a RACV Car Loan based on the vehicle price and loan details.',
+  'running-costs':
+    'Estimated monthly running costs including registration, fuel, servicing, tyres, battery and roadside assistance.',
+  insurance:
+    'Estimated monthly premium for RACV Car Insurance based on indicative pricing for this vehicle.',
+} as const;
+
+function CostTooltip({ id, label }: { id: keyof typeof COST_TOOLTIPS; label: string }) {
+  const tooltipId = `running-costs-tooltip-${id}`;
+
   return (
-    <img
-      className="running-costs__help"
-      src={assetUrl('/icons/running-costs/help-circle.png')}
-      alt=""
-      width={16}
-      height={16}
-      aria-hidden="true"
-    />
+    <span className="running-costs__tooltip">
+      <button
+        type="button"
+        className="running-costs__tooltip-trigger"
+        aria-label={`More information about ${label}`}
+        aria-describedby={tooltipId}
+      >
+        <TooltipIcon />
+      </button>
+      <span id={tooltipId} role="tooltip" className="running-costs__tooltip-content">
+        {COST_TOOLTIPS[id]}
+      </span>
+    </span>
   );
 }
 
@@ -143,7 +159,7 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
                       <div className="running-costs__label-wrap">
                         <div className="running-costs__label running-costs__label--strong">
                           Car loan
-                          <HelpIcon />
+                          <CostTooltip id="car-loan" label="car loan" />
                         </div>
                       </div>
                     </div>
@@ -170,7 +186,7 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
                       <div className="running-costs__label-wrap">
                         <div className="running-costs__label running-costs__label--strong">
                           Running costs
-                          <HelpIcon />
+                          <CostTooltip id="running-costs" label="running costs" />
                         </div>
                       </div>
                     </div>
@@ -208,7 +224,7 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
                       <div className="running-costs__label-wrap">
                         <div className="running-costs__label running-costs__label--strong">
                           Car Insurance
-                          <HelpIcon />
+                          <CostTooltip id="insurance" label="car insurance" />
                         </div>
                         <a href="#get-quote" className="running-costs__link">
                           Get an RACV Insurance quote
