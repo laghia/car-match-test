@@ -230,7 +230,7 @@ function inferAnnualKmBand(data: RunningCostsData, baselineData: RunningCostsDat
   if (baselineFuel <= 0) return DEFAULT_ANNUAL_KM_BAND;
 
   const inferredKm = BASELINE_ANNUAL_KM * (currentFuel / baselineFuel);
-  let closest = DEFAULT_ANNUAL_KM_BAND;
+  let closest: string = DEFAULT_ANNUAL_KM_BAND;
   let minDiff = Infinity;
 
   for (const band of ANNUAL_KM_BANDS) {
