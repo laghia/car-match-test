@@ -587,14 +587,14 @@ const defaultRunningCostLineItems: RunningCostsLineItem[] = [
     id: 'roadside',
     label: 'RACV Extra Car Roadside Assistance',
     footnote: '#',
-    value: '$18',
+    value: '$0',
     linkLabel: 'Join now',
   },
 ];
 
 const cheryRunningCosts: RunningCostsData = {
   loanCost: 574,
-  runningCost: 313,
+  runningCost: 294,
   insuranceCost: 208,
   lineItems: [
     {
@@ -626,7 +626,7 @@ const cheryRunningCosts: RunningCostsData = {
       id: 'roadside',
       label: 'RACV Emergency Roadside Assistance',
       footnote: '#',
-      value: '$19',
+      value: '$0',
       linkLabel: 'Join now',
     },
   ],
@@ -634,7 +634,7 @@ const cheryRunningCosts: RunningCostsData = {
 
 const rav4RunningCosts: RunningCostsData = {
   loanCost: 1385,
-  runningCost: 440,
+  runningCost: 422,
   insuranceCost: 208,
   lineItems: defaultRunningCostLineItems,
 };
@@ -796,7 +796,7 @@ const corollaImages = [
 
 const corollaRunningCosts: RunningCostsData = {
   loanCost: 725,
-  runningCost: 268,
+  runningCost: 249,
   insuranceCost: 195,
   lineItems: [
     { id: 'registration', label: 'Victorian registration', value: '$72' },
@@ -808,7 +808,7 @@ const corollaRunningCosts: RunningCostsData = {
       id: 'roadside',
       label: 'RACV Emergency Roadside Assistance',
       footnote: '#',
-      value: '$19',
+      value: '$0',
       linkLabel: 'Join now',
     },
   ],

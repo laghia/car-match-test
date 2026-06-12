@@ -187,6 +187,38 @@
   color: var(--text-04);
 }
 
+.edit-costs-panel__era-included {
+  margin-top: 8px;
+}
+
+.edit-costs-panel__era-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+}
+
+.edit-costs-panel__era-price-original {
+  text-decoration: line-through;
+  color: var(--text-04);
+}
+
+.edit-costs-panel__era-price-free {
+  font-weight: 600;
+  color: var(--text-03);
+}
+
+.edit-costs-panel__era-note {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 0.25px;
+  color: var(--text-04);
+}
+
 .edit-costs-panel__input,
 .edit-costs-panel__select {
   width: 100%;

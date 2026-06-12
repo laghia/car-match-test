@@ -5,6 +5,7 @@ import { CrossIcon, TooltipIcon } from '../Icons';
 import { RoadsideAssistanceSelect } from './RoadsideAssistanceSelect';
 import {
   getRoadsideMonthlyCost,
+  getRoadsideOption,
   ROADSIDE_ASSISTANCE_OPTIONS,
 } from './roadsideAssistanceOptions';
 import './EditRunningCostsPanel.css';
@@ -42,6 +43,14 @@ export const ANNUAL_KM_BANDS = [
 
 const DEFAULT_ANNUAL_KM_BAND = ANNUAL_KM_BANDS[1].value;
 
+const LOAN_TERM_OPTIONS = Array.from({ length: 7 }, (_, index) => {
+  const years = index + 1;
+  return {
+    value: String(years),
+    label: `${years} year${years === 1 ? '' : 's'}`,
+  };
+});
+
 type KmScaledCostKey = 'registration' | 'fuel' | 'servicing' | 'tyres' | 'battery';
 
 function getKmBand(value: string) {
@@ -77,16 +86,12 @@ function getRoadsideMonthlyCostFromForm(value: string): number {
   return getRoadsideMonthlyCost(value);
 }
 
-function formAmountToMonthly(value: string, viewAs: RunningCostsViewAs): number {
-  const amount = parseAmount(value);
-  return viewAs === 'annual' ? amount / 12 : amount;
+function monthlyCostToAnnualInsurance(monthly: number): string {
+  return String(Math.round(monthly * 12));
 }
 
-function monthlyToFormAmount(monthly: number, viewAs: RunningCostsViewAs): string {
-  if (viewAs === 'annual') {
-    return String(Math.round(monthly * 12));
-  }
-  return String(Math.round(monthly));
+function annualInsuranceToMonthlyCost(annualValue: string): number {
+  return parseAmount(annualValue) / 12;
 }
 
 function parseStoredAmount(value: string): number {
@@ -176,7 +181,6 @@ export function applyFormToRunningCosts(
   form: EditCostsFormState,
   currentData: RunningCostsData,
   baselineData: RunningCostsData,
-  viewAs: RunningCostsViewAs = 'monthly',
 ): RunningCostsData {
   const baseline = getBaselineMonthlyCosts(baselineData);
   const { annualKm } = getKmBand(form.annualKmBand);
@@ -184,8 +188,9 @@ export function applyFormToRunningCosts(
     baseline,
     annualKm,
   );
-  const roadside = getRoadsideMonthlyCostFromForm(form.roadside);
-  const insurance = formAmountToMonthly(form.insurance, viewAs);
+  const roadside =
+    form.hasFinance === 'yes' ? 0 : getRoadsideMonthlyCostFromForm(form.roadside);
+  const insurance = annualInsuranceToMonthlyCost(form.insurance);
 
   const lineItemAmounts: Record<string, number> = {
     registration,
@@ -242,12 +247,11 @@ function inferAnnualKmBand(data: RunningCostsData, baselineData: RunningCostsDat
 function buildDefaultFormState(
   data: RunningCostsData,
   baselineData: RunningCostsData,
-  viewAs: RunningCostsViewAs,
 ): EditCostsFormState {
   if (data.customizations) {
     return {
       ...data.customizations,
-      insurance: monthlyToFormAmount(data.insuranceCost, viewAs),
+      insurance: monthlyCostToAnnualInsurance(data.insuranceCost),
     };
   }
 
@@ -258,7 +262,7 @@ function buildDefaultFormState(
     loanTerm: DEFAULT_LOAN_FORM.loanTerm,
     annualKmBand: inferAnnualKmBand(data, baselineData),
     roadside: getRoadsideFromData(data),
-    insurance: monthlyToFormAmount(data.insuranceCost, viewAs),
+    insurance: monthlyCostToAnnualInsurance(data.insuranceCost),
   };
 }
 
@@ -319,12 +323,12 @@ export function EditRunningCostsPanel({
 }: EditRunningCostsPanelProps) {
   const titleId = useId();
   const [form, setForm] = useState<EditCostsFormState>(() =>
-    buildDefaultFormState(data, baselineData, viewAs),
+    buildDefaultFormState(data, baselineData),
   );
 
   useEffect(() => {
-    setForm(buildDefaultFormState(data, baselineData, viewAs));
-  }, [data, baselineData, viewAs]);
+    setForm(buildDefaultFormState(data, baselineData));
+  }, [data, baselineData]);
 
   const [isFollowing, setIsFollowing] = useState(false);
   const [panelTop, setPanelTop] = useState<number | null>(null);
@@ -382,7 +386,7 @@ export function EditRunningCostsPanel({
   const handleUpdate = () => {
     if (isUpdating) return;
 
-    onUpdate(applyFormToRunningCosts(form, data, baselineData, viewAs));
+    onUpdate(applyFormToRunningCosts(form, data, baselineData));
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -480,18 +484,20 @@ export function EditRunningCostsPanel({
                 <Field
                   id="loan-term"
                   label="Loan term"
-                  helper="Enter a term from 1 to 7 years"
+                  helper="Select a term from 1 to 7 years"
                 >
-                  <input
+                  <select
                     id="loan-term"
-                    className="edit-costs-panel__input"
-                    type="text"
-                    inputMode="numeric"
-                    value={`${form.loanTerm} years`}
-                    onChange={(event) =>
-                      updateField('loanTerm', event.target.value.replace(/[^\d]/g, ''))
-                    }
-                  />
+                    className="edit-costs-panel__select"
+                    value={form.loanTerm}
+                    onChange={(event) => updateField('loanTerm', event.target.value)}
+                  >
+                    {LOAN_TERM_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
                 </Field>
               </div>
             )}
@@ -528,16 +534,25 @@ export function EditRunningCostsPanel({
                   value={form.roadside}
                   onChange={(value) => updateField('roadside', value)}
                 />
+                {form.hasFinance === 'yes' && (
+                  <div className="edit-costs-panel__era-included">
+                    <p className="edit-costs-panel__era-price">
+                      <span className="edit-costs-panel__era-price-original">
+                        ${getRoadsideOption(form.roadside).annualCost}
+                      </span>
+                      <span className="edit-costs-panel__era-price-free">$0</span>
+                    </p>
+                    <p className="edit-costs-panel__era-note">
+                      If you have RACV finance ERA is included
+                    </p>
+                  </div>
+                )}
               </Field>
 
               <Field
                 id="insurance"
                 label="RACV Car Insurance"
-                helper={
-                  viewAs === 'annual'
-                    ? 'Enter your yearly cost or quote number. E.g. REQ12345'
-                    : 'Enter your yearly cost or quote number. E.g. REQ12345'
-                }
+                helper="Enter your yearly insurance cost or quote number. E.g. REQ12345"
               >
                 <input
                   id="insurance"

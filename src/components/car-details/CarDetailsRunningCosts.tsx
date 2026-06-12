@@ -60,7 +60,7 @@ const COST_TOOLTIPS: Record<string, ReactNode> = {
     </>
   ),
   insurance:
-    'Estimated monthly premium for RACV Car Insurance based on indicative pricing for this vehicle.',
+    'This estimate is derived from a comprehensive car insurance quote for a 28 year old female privately owned car parked in the western suburbs with no claim history',
 };
 
 function CostTooltip({ id, label }: { id: keyof typeof COST_TOOLTIPS; label: string }) {
@@ -129,7 +129,7 @@ function CostTooltip({ id, label }: { id: keyof typeof COST_TOOLTIPS; label: str
     [clearCloseTimeout],
   );
 
-  const isWide = id === 'car-loan' || id === 'running-costs';
+  const isWide = id === 'car-loan' || id === 'running-costs' || id === 'insurance';
 
   return (
     <>
@@ -449,6 +449,13 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
               </div>
             </div>
           </div>
+
+          <p className="running-costs__disclaimer">
+            **The default estimated running costs assume cars are driven 15,000 km per year and are
+            serviced according to the manufacturer&apos;s recommended servicing schedule. All prices are
+            estimates. They are intended to be used as a guide only and may vary based on individual
+            circumstances.
+          </p>
         </div>
 
         {isEditPanelOpen && (
@@ -464,5 +471,6 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
         )}
       </div>
     </section>
+    
   );
 }
