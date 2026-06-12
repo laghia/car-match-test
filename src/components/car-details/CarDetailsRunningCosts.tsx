@@ -451,7 +451,7 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
           </div>
 
           <p className="running-costs__disclaimer">
-            **The default estimated running costs assume cars are driven 15,000 km per year and are
+            **The default estimated costs assume cars are driven 15,000 km per year and are
             serviced according to the manufacturer&apos;s recommended servicing schedule. All prices are
             estimates. They are intended to be used as a guide only and may vary based on individual
             circumstances.
