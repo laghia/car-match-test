@@ -49,16 +49,6 @@ export function CarDetailsSidePanel({
               </span>
             </p>
           </div>
-          <div className="car-details-side-panel__rating" aria-label="RACV Review">
-            <img
-              className="car-details-side-panel__rating-logo"
-              src={assetUrl('/racv-rating-logo.svg')}
-              alt=""
-              width={37}
-              height={20}
-            />
-            <span className="car-details-side-panel__rating-label">Review</span>
-          </div>
         </div>
 
         <hr className="car-details-side-panel__divider" />
@@ -87,6 +77,23 @@ export function CarDetailsSidePanel({
             <dd>{spec.value}</dd>
           </div>
         ))}
+
+        <div className="car-details-side-panel__spec car-details-side-panel__spec--running-costs">
+          <dt className="car-details-side-panel__running-costs-label">Running costs</dt>
+          <dd>
+            <a href="#running-costs" className="car-details-side-panel__running-costs-link">
+              View costs
+              <img
+                className="car-details-side-panel__running-costs-arrow"
+                src={assetUrl('/icons/arrow-down.png')}
+                alt=""
+                width={16}
+                height={16}
+                aria-hidden="true"
+              />
+            </a>
+          </dd>
+        </div>
 
         {ancapYear && (
           <div className="car-details-side-panel__spec car-details-side-panel__spec--ancap">
