@@ -551,8 +551,8 @@ export function EditRunningCostsPanel({
 
               <Field
                 id="insurance"
-                label="RACV Car Insurance"
-                helper="Enter your yearly insurance cost or quote number. E.g. REQ12345"
+                label="Car Insurance"
+                helper="Enter your yearly insurance cost or RACV insurance quote number. E.g. REQ12345"
               >
                 <input
                   id="insurance"
