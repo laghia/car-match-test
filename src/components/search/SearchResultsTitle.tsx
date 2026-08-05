@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { flowConfig } from '../../flow/config';
 import { ArrowLeftIcon, ChevronDownIcon, CrossIcon, HeartOutlineIcon } from '../Icons';
 import './SearchResultsTitle.css';
 
@@ -30,10 +31,10 @@ export function SearchResultsTitle({
             <ArrowLeftIcon />
             Car Match
           </Link>
-          <button type="button" className="search-title__shortlist">
+          <Link to={flowConfig.shortlistPath} className="search-title__shortlist">
             Compare shortlist ({shortlistCount})
             <HeartOutlineIcon />
-          </button>
+          </Link>
         </div>
       </div>
 

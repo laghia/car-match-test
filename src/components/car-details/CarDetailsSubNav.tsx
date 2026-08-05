@@ -39,10 +39,10 @@ export function CarDetailsSubNav({
           <span className="car-details-subnav__current">Price &amp; Specs</span>
         </nav>
 
-        <button type="button" className="car-details-subnav__shortlist">
+        <Link to={flowConfig.shortlistPath} className="car-details-subnav__shortlist">
           Compare shortlist ({shortlistCount})
           <HeartOutlineIcon />
-        </button>
+        </Link>
       </div>
     </div>
   );

@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { LandingPage } from './pages/LandingPage';
 import { SearchPage } from './pages/SearchPage';
+import { ShortlistPage } from './pages/ShortlistPage';
+import { ComparePage } from './pages/ComparePage';
 import { CarDetailsPage } from './pages/CarDetailsPage';
 import { NewScreenPage } from './pages/NewScreenPage';
 import { flowConfig } from './flow/config';
@@ -15,6 +17,8 @@ export default function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path={flowConfig.searchPath} element={<SearchPage />} />
           <Route path={`${flowConfig.searchPath}/:tag`} element={<SearchPage />} />
+          <Route path={flowConfig.shortlistPath} element={<ShortlistPage />} />
+          <Route path={flowConfig.comparePath} element={<ComparePage />} />
           <Route
             path={`${flowConfig.carDetailsPath}/:make/:model/:variantSlug`}
             element={<CarDetailsPage />}

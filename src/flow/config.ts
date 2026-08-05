@@ -11,6 +11,8 @@ export const flowConfig = {
   enableNewScreen: false,
   newScreenPath: '/new-screen',
   searchPath: '/car-match/search',
+  shortlistPath: '/car-match/shortlist',
+  comparePath: '/car-match/compare',
   carDetailsPath: '/car-match/car-details',
 };
 
