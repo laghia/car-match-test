@@ -400,7 +400,12 @@ function CalculateCostModal({
   };
 
   const resetForm = () => {
-    setForm({ ...baselineForm });
+    setForm({
+      ...baselineForm,
+      annualKmBand: '10000-15000',
+      applyKmToAll: false,
+      applyRoadsideToAll: false,
+    });
     onReset();
   };
 
@@ -609,18 +614,6 @@ function CalculateCostModal({
                 Update
               </button>
             </div>
-
-            <p className="cost-modal__recaptcha">
-              This site is protected by reCAPTCHA and the{' '}
-              <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">
-                Google Privacy Policy
-              </a>{' '}
-              and{' '}
-              <a href="https://policies.google.com/terms" target="_blank" rel="noreferrer">
-                Terms of Service
-              </a>{' '}
-              apply.
-            </p>
           </footer>
         </form>
       </div>
@@ -709,7 +702,18 @@ export function ComparePage() {
     clearStoredOwnershipCosts(comparisonCars[activeCostCarIndex].ownershipKey);
     setOwnershipCosts((current) =>
       current.map((car, index) =>
-        index === activeCostCarIndex ? { ...INITIAL_OWNERSHIP[index] } : car,
+        index === activeCostCarIndex
+          ? {
+              ...INITIAL_OWNERSHIP[index],
+              calculated: false,
+              form: {
+                ...INITIAL_OWNERSHIP[index].form,
+                annualKmBand: '10000-15000',
+                applyKmToAll: false,
+                applyRoadsideToAll: false,
+              },
+            }
+          : car,
       ),
     );
   };
