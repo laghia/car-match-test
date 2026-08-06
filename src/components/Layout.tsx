@@ -7,7 +7,11 @@ function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    const { documentElement } = document;
+    const previousBehavior = documentElement.style.scrollBehavior;
+    documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo(0, 0);
+    documentElement.style.scrollBehavior = previousBehavior;
   }, [pathname]);
 
   return null;
