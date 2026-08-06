@@ -499,10 +499,13 @@ function CalculateCostModal({
                       }
                     />
                   </label>
-                  <label className="cost-modal__field">
-                    <strong>Interest rate</strong>
+                  <div className="cost-modal__field">
+                    <label htmlFor="cost-modal-interest-rate">
+                      <strong>Interest rate</strong>
+                    </label>
                     <span>Enter a rate between 5 and 18%.</span>
                     <input
+                      id="cost-modal-interest-rate"
                       type="text"
                       inputMode="decimal"
                       value={`${form.interestRate}%`}
@@ -510,7 +513,15 @@ function CalculateCostModal({
                         updateField('interestRate', event.target.value.replace(/[^\d.]/g, ''))
                       }
                     />
-                  </label>
+                    <a
+                      href="https://my.loans.racv.com.au/s/getMyRate"
+                      className="cost-modal__link"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Get my personalised rate
+                    </a>
+                  </div>
                   <label className="cost-modal__field">
                     <strong>Loan term</strong>
                     <select
@@ -543,7 +554,7 @@ function CalculateCostModal({
                   }
                 />
               </label>
-              <a href="https://www.racv.com.au/insurance/car-insurance.html" target="_blank" rel="noreferrer">
+              <a href="https://my.racv.com.au/s/motor-insurance?p=CRCP" target="_blank" rel="noreferrer">
                 Get RACV Insurance quote
               </a>
             </section>

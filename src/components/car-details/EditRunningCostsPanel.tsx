@@ -477,7 +477,12 @@ export function EditRunningCostsPanel({
                       updateField('interestRate', event.target.value.replace(/[^\d.]/g, ''))
                     }
                   />
-                  <a href="#get-rate" className="edit-costs-panel__link">
+                  <a
+                    href="https://my.loans.racv.com.au/s/getMyRate"
+                    className="edit-costs-panel__link"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     Get my personalised rate
                   </a>
                 </Field>

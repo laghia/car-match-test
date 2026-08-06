@@ -399,7 +399,12 @@ export function CarDetailsRunningCosts({ data, carKey }: CarDetailsRunningCostsP
                       <LineItemIcon id="car-loan" />
                       <div className="running-costs__label-wrap">
                         <p className="running-costs__sub-label">Want a new car loan?</p>
-                        <a href="#get-rate" className="running-costs__link">
+                        <a
+                          href="https://my.loans.racv.com.au/s/getMyRate"
+                          className="running-costs__link"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
                           Get my RACV Car Loan rate
                         </a>
                       </div>
@@ -452,7 +457,12 @@ export function CarDetailsRunningCosts({ data, carKey }: CarDetailsRunningCostsP
                           Car Insurance
                           {showTooltips && <CostTooltip id="insurance" label="car insurance" />}
                         </div>
-                        <a href="#get-quote" className="running-costs__link">
+                        <a
+                          href="https://my.racv.com.au/s/motor-insurance?p=CRCP"
+                          className="running-costs__link"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
                           Get an RACV Insurance quote
                         </a>
                       </div>

@@ -725,11 +725,25 @@
   line-height: 24px;
 }
 
+.cost-modal__field > label {
+  display: contents;
+}
+
 .cost-modal__field > span {
   color: #706f76;
   font-size: 14px;
   line-height: 24px;
   letter-spacing: 0.25px;
+}
+
+.cost-modal__link,
+.cost-modal__card > a {
+  align-self: flex-start;
+  color: var(--link);
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+  text-decoration: underline;
 }
 
 .cost-modal__field input,
@@ -828,15 +842,6 @@
 .cost-modal__switch input:focus-visible + span {
   outline: 2px solid var(--interactive-01);
   outline-offset: 2px;
-}
-
-.cost-modal__card > a {
-  align-self: flex-start;
-  color: var(--link);
-  font-size: 14px;
-  line-height: 22px;
-  letter-spacing: 0.25px;
-  text-decoration: underline;
 }
 
 .cost-modal__actions {
