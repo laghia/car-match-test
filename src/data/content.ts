@@ -376,6 +376,19 @@ export const defaultSearchResults: VehicleResult[] = [
   },
   {
     id: 2,
+    title: '2026 Toyota RAV4 Cruiser',
+    variant: '2.5 Hybrid AWD Cruiser E-CVT',
+    price: '$65,885',
+    fuelType: 'Petrol (hybrid electric)',
+    engine: '143kW automatic 4X4',
+    image: assetUrl('/compare-toyota-rav4.png'),
+    badge: 'Hybrid',
+    makeSlug: 'toyota',
+    modelSlug: 'rav4',
+    variantSlug: 'cruiser',
+  },
+  {
+    id: 3,
     title: '2025 Toyota Corolla Ascent Sport',
     variant: '1.8 Ascent Sport Hybrid e-CVT',
     price: '$36,469',
@@ -388,7 +401,7 @@ export const defaultSearchResults: VehicleResult[] = [
     variantSlug: 'ascent-sport-1-8-ascent-sport-hybrid-e-cvt-2',
   },
   {
-    id: 3,
+    id: 4,
     title: '2026 BYD Seal Premium',
     variant: 'Extended Range RWD',
     price: '$45,990',
@@ -397,7 +410,7 @@ export const defaultSearchResults: VehicleResult[] = [
     image: `${RACV}/content/dam/racv-assets/images/images/content-hub/transport/2025-cars/byd/2025-byd-sealion-7/2025-byd-sealion-7-black/BYD-Sealion-7-Thumbnail.jpg.transform/imageDesktop/image.jpg`,
   },
   {
-    id: 4,
+    id: 5,
     title: '2026 MG 4 Excite',
     variant: '51kWh Standard Range',
     price: '$38,990',
@@ -406,22 +419,13 @@ export const defaultSearchResults: VehicleResult[] = [
     image: `${RACV}/content/dam/racv-assets/images/icons/car-match/electric-420x280.jpg`,
   },
   {
-    id: 5,
+    id: 6,
     title: '2026 BYD Shark 6 Performance',
     variant: 'Plug-in Hybrid Dual Cab',
     price: '$57,900',
     fuelType: 'Plug-in hybrid electric',
     engine: '321kW dual motor AWD',
     image: `${RACV}/content/dam/racv-assets/images/images/content-hub/transport/2026-cars/byd/byd-shark-6/shark-6-performance/banners-and-thumbnails/2026-BYD-Shark-6-Performance-thumbnail-900x600.jpg.transform/imageDesktop/image.jpg`,
-  },
-  {
-    id: 6,
-    title: '2026 Toyota RAV4 GX',
-    variant: '2.5 Hybrid AWD E-CVT',
-    price: '$42,500',
-    fuelType: 'Petrol (hybrid electric)',
-    engine: '163kW automatic AWD',
-    image: `${RACV}/content/dam/racv-assets/images/images/motor/car-match/1600x900/green-mg-1600x900.jpg`,
   },
 ];
 
@@ -555,43 +559,6 @@ export type CarDetails = {
   relatedCars: RelatedCar[];
 };
 
-const defaultRunningCostLineItems: RunningCostsLineItem[] = [
-  {
-    id: 'registration',
-    label: 'Registration',
-    value: '$96',
-  },
-  {
-    id: 'fuel',
-    label: 'Fuel / electricity',
-    value: '$104',
-    valueFootnote: '^',
-  },
-  {
-    id: 'servicing',
-    label: 'Servicing',
-    value: '$45',
-  },
-  {
-    id: 'tyres',
-    label: 'Tyres',
-    value: '$16',
-  },
-  {
-    id: 'battery',
-    label: 'Battery',
-    value: '$8',
-    valueFootnote: '^',
-  },
-  {
-    id: 'roadside',
-    label: 'RACV Extra Car Roadside Assistance',
-    footnote: '#',
-    value: '$0',
-    linkLabel: 'Join now',
-  },
-];
-
 const cheryRunningCosts: RunningCostsData = {
   loanCost: 574,
   runningCost: 294,
@@ -633,10 +600,40 @@ const cheryRunningCosts: RunningCostsData = {
 };
 
 const rav4RunningCosts: RunningCostsData = {
-  loanCost: 1385,
-  runningCost: 422,
-  insuranceCost: 208,
-  lineItems: defaultRunningCostLineItems,
+  loanCost: 1311,
+  runningCost: 230,
+  insuranceCost: 78,
+  lineItems: [
+    {
+      id: 'registration',
+      label: 'Victorian registration',
+      value: '$117',
+    },
+    {
+      id: 'fuel',
+      label: 'Fuel / electricity',
+      value: '$52',
+      valueFootnote: '^',
+    },
+    {
+      id: 'servicing',
+      label: 'Servicing',
+      value: '$34',
+    },
+    {
+      id: 'battery',
+      label: 'Battery',
+      value: '$7',
+      valueFootnote: '^',
+    },
+    {
+      id: 'roadside',
+      label: 'RACV Emergency Roadside Assistance',
+      footnote: '#',
+      value: '$20',
+      linkLabel: 'Join now',
+    },
+  ],
 };
 
 const featureAccordions: VehicleSpecAccordion[] = [
@@ -762,29 +759,89 @@ const rav4VehicleSpecs: VehicleSpecsData = {
     { label: 'Body type', value: 'SUV' },
     { label: 'Number of doors', value: '5' },
     { label: 'Number of seats', value: '5' },
-    { label: 'Fuel Type', value: 'Hybrid' },
-    { label: 'Power / torque', value: '163kW/323Nm' },
-    { label: 'Transmission', value: 'automatic' },
-    { label: 'Drive wheels', value: '4x4' },
+    { label: 'Fuel Type', value: 'Hybrid Petrol' },
+    { label: 'Power / torque', value: '143kW' },
+    { label: 'Transmission', value: 'Automatic' },
+    { label: 'Drive wheels', value: '4×4' },
     { label: 'Engine size', value: '2.5L' },
     { label: 'Towing capacity (braked)', value: '1,500kg' },
-    { label: 'Fuel consumption (combined)', value: '4.7L/100km (WLTP)', footnote: '†' },
-    { label: 'Energy consumption (combined)', value: '21.2kW/100km (WLTP)', footnote: '†' },
-    { label: 'CO2 emissions (combined)', value: '107g/km (WLTP)', footnote: '†' },
-    { label: 'Warranty', value: '5 Years/unlimited km' },
-    { label: 'Capped price service', value: '1 years/15,000km' },
-    { label: 'Safety rating', value: '5 stars' },
+    { label: 'Fuel consumption (combined)', value: '4.6L/100km', footnote: '†' },
+    { label: 'CO2 emissions (combined)', value: '105g/km', footnote: '†' },
+    { label: 'Warranty', value: '5 years/unlimited km' },
+    { label: 'Capped price service', value: '5 years/75,000km' },
+    { label: 'Safety rating', value: 'Not tested' },
     { label: 'Build country', value: 'Japan' },
   ],
   features: featureAccordions,
-  specifications: specificationAccordions,
+  specifications: [
+    {
+      id: 'engine-transmission',
+      title: 'Engine and transmission',
+      rows: [
+        { label: 'Engine type', value: 'Hybrid petrol' },
+        { label: 'Cylinders', value: '4' },
+        { label: 'Engine size', value: '2.5L' },
+        { label: 'Power', value: '143kW' },
+        { label: 'Transmission', value: 'E-CVT automatic' },
+        { label: 'Drive wheels', value: '4×4' },
+      ],
+    },
+    {
+      id: 'battery-charging',
+      title: 'Battery and charging',
+      rows: [{ label: 'Hybrid battery', value: 'Nickel-metal hydride' }],
+    },
+    {
+      id: 'dimensions-weight',
+      title: 'Dimensions and weight',
+      rows: [
+        { label: 'Length', value: '4,600mm' },
+        { label: 'Width', value: '1,855mm' },
+        { label: 'Height', value: '1,685mm' },
+      ],
+    },
+    {
+      id: 'cargo-towing',
+      title: 'Cargo and towing capacity',
+      rows: [
+        { label: 'Boot volume', value: '580L' },
+        { label: 'Towing capacity (braked)', value: '1,500kg' },
+      ],
+    },
+    {
+      id: 'fuel-economy',
+      title: 'Fuel economy and emissions',
+      rows: [
+        { label: 'Fuel consumption (combined)', value: '4.6L/100km', footnote: '†' },
+        { label: 'CO2 emissions (combined)', value: '105g/km', footnote: '†' },
+      ],
+    },
+    {
+      id: 'warranty-services',
+      title: 'Warranty and services',
+      rows: [
+        { label: 'Warranty', value: '5 years/unlimited km' },
+        { label: 'Capped price service', value: '5 years/75,000km' },
+      ],
+    },
+    {
+      id: 'wheels-tyres',
+      title: 'Wheels and tyres',
+      rows: [{ label: 'Tyre size', value: '225/60 R18' }],
+    },
+    {
+      id: 'off-road',
+      title: 'Off road',
+      rows: [{ label: 'Ground clearance', value: '190mm' }],
+    },
+  ],
 };
 
-const cheryTiggoImages = [
-  assetUrl('/chery-tiggo-4-card.png'),
-  assetUrl('/chery-tiggo-4-card.png'),
-  assetUrl('/chery-tiggo-4-card.png'),
-  assetUrl('/chery-tiggo-4-card.png'),
+const rav4Images = [
+  assetUrl('/compare-toyota-rav4.png'),
+  assetUrl('/compare-toyota-rav4.png'),
+  assetUrl('/compare-toyota-rav4.png'),
+  assetUrl('/compare-toyota-rav4.png'),
 ];
 
 const corollaImages = [
@@ -839,12 +896,12 @@ const corollaVehicleSpecs: VehicleSpecsData = {
 const relatedCarsMock: RelatedCar[] = [
   {
     id: 101,
-    title: '2024 Toyota RAV4 Cruiser',
-    variant: '2.5 Hybrid E-CVT',
-    price: '$49,700',
+    title: '2026 Toyota RAV4 Cruiser',
+    variant: '2.5 Hybrid AWD E-CVT',
+    price: '$65,885',
     fuelType: 'Petrol (hybrid electric)',
-    engine: '163kW automatic',
-    image: `${RACV}/content/dam/racv-assets/images/images/motor/car-match/1600x900/green-mg-1600x900.jpg`,
+    engine: '143kW automatic 4X4',
+    image: assetUrl('/compare-toyota-rav4.png'),
     badge: 'Hybrid',
     variantCount: 11,
     yearTag: 'current-model',
@@ -852,12 +909,12 @@ const relatedCarsMock: RelatedCar[] = [
   },
   {
     id: 102,
-    title: '2023 Toyota RAV4 Cruiser',
+    title: '2026 Toyota RAV4 GXL',
     variant: '2.5 Hybrid AWD E-CVT',
-    price: '$49,700',
+    price: '$58,990',
     fuelType: 'Petrol (hybrid electric)',
-    engine: '233kW automatic AWD',
-    image: `${RACV}/content/dam/racv-assets/images/images/motor/car-match/1600x900/green-mg-1600x900.jpg`,
+    engine: '143kW automatic 4X4',
+    image: assetUrl('/compare-toyota-rav4.png'),
     badge: 'Hybrid',
     variantCount: 11,
     yearTag: 'current-model',
@@ -865,15 +922,15 @@ const relatedCarsMock: RelatedCar[] = [
   },
   {
     id: 103,
-    title: '2024 Toyota RAV4 Cruiser',
+    title: '2026 Toyota RAV4 GX',
     variant: '2.5 Hybrid AWD E-CVT',
-    price: '$49,700',
+    price: '$52,990',
     fuelType: 'Petrol (hybrid electric)',
-    engine: '233kW automatic AWD',
-    image: `${RACV}/content/dam/racv-assets/images/images/motor/car-match/1600x900/green-mg-1600x900.jpg`,
+    engine: '143kW automatic 4X4',
+    image: assetUrl('/compare-toyota-rav4.png'),
     badge: 'Hybrid',
     variantCount: 11,
-    yearTag: 'coming-soon',
+    yearTag: 'current-model',
     showReview: true,
   },
 ];
@@ -883,82 +940,90 @@ const rav4Mock: CarDetails = {
   model: 'RAV4',
   makeSlug: 'toyota',
   modelSlug: 'rav4',
-  variantSlug: 'cruiser-2-5-hybrid-e-cvt',
-  year: 2023,
-  title: '2023 Toyota RAV4 Cruiser',
-  variant: '2.5 Hybrid E-CVT',
-  price: '$49,700',
-  monthlyRepayment: '$891',
-  images: cheryTiggoImages,
-  moreImagesCount: 19,
-  ancapYear: '2019',
-  ancapStars: 5,
+  variantSlug: 'cruiser',
+  year: 2026,
+  title: '2026 Toyota RAV4 Cruiser',
+  variant: '2.5 Hybrid AWD Cruiser E-CVT',
+  price: '$65,885',
+  monthlyRepayment: '$1,311',
+  images: rav4Images,
+  moreImagesCount: 12,
+  ancapYear: 'Not tested',
+  ancapStars: 0,
   runningCosts: rav4RunningCosts,
   vehicleSpecs: rav4VehicleSpecs,
   specs: [
-    { label: 'Fuel type', value: 'Hybrid' },
-    { label: 'Drive wheels', value: '4x4' },
+    { label: 'Fuel type', value: 'Hybrid Petrol' },
+    { label: 'Drive wheels', value: '4×4' },
     { label: 'Body type', value: 'SUV' },
     { label: 'Seats', value: '5 seats' },
     { label: 'Transmission', value: 'Automatic' },
-    { label: 'Power', value: '163kW' },
-    { label: 'Towing capacity', value: '1,500kg' },
+    { label: 'Power', value: '143kW' },
+    { label: 'Engine', value: '2.5L hybrid' },
+    { label: 'Towing capacity (braked)', value: '1,500kg' },
   ],
   fuelFilters: [
     { id: 'all', label: 'All', active: true },
     { id: 'hybrid-electric', label: 'Hybrid electric (9)' },
-    { id: 'petrol', label: 'Petrol (5)' },
+    { id: 'petrol', label: 'Petrol (2)' },
     { id: 'hybrid', label: 'Hybrid (5)' },
-    { id: 'electric', label: 'Electric (2)' },
-    { id: 'hydrogen', label: 'Hydrogen (1)' },
   ],
-  variantCount: 14,
-  yearOptions: [2023, 2022, 2021, 2020, 2019],
-  selectedVariantId: 'cruiser-hybrid-ecvt',
+  variantCount: 8,
+  yearOptions: [2026, 2025, 2024, 2023],
+  selectedVariantId: 'cruiser-hybrid-awd',
   variants: [
-    {
-      id: 'cruiser-hybrid-ecvt',
-      trim: 'Cruiser',
-      price: '$49,700',
-      engine: '2.5 Hybrid E-CVT',
-      isHybrid: true,
-    },
-    {
-      id: 'cruiser-2-0-cvt',
-      trim: 'Cruiser',
-      price: '$47,200',
-      engine: '2.0 CVT',
-    },
     {
       id: 'cruiser-hybrid-awd',
       trim: 'Cruiser',
-      price: '$52,700',
+      price: '$65,885',
+      engine: '2.5 Hybrid AWD Cruiser E-CVT',
+      isHybrid: true,
+    },
+    {
+      id: 'cruiser-hybrid-fwd',
+      trim: 'Cruiser',
+      price: '$62,990',
+      engine: '2.5 Hybrid Cruiser E-CVT',
+      isHybrid: true,
+    },
+    {
+      id: 'gxl-hybrid-awd',
+      trim: 'GXL',
+      price: '$58,990',
+      engine: '2.5 Hybrid AWD E-CVT',
+      isHybrid: true,
+    },
+    {
+      id: 'gx-hybrid-awd',
+      trim: 'GX',
+      price: '$52,990',
       engine: '2.5 Hybrid AWD E-CVT',
       isHybrid: true,
     },
     {
       id: 'edge-hybrid-awd',
       trim: 'Edge',
-      price: '$56,650',
+      price: '$67,990',
       engine: '2.5 Hybrid AWD Auto',
       isHybrid: true,
     },
     {
-      id: 'edge-awd',
-      trim: 'Edge',
-      price: '$54,520',
-      engine: '2.5 AWD Auto',
-    },
-    {
-      id: 'gxl-hybrid',
-      trim: 'GXL',
-      price: '$44,100',
+      id: 'gx-hybrid-fwd',
+      trim: 'GX',
+      price: '$49,990',
       engine: '2.5 Hybrid E-CVT',
       isHybrid: true,
     },
   ],
   relatedCars: relatedCarsMock,
 };
+
+const cheryTiggoImages = [
+  assetUrl('/chery-tiggo-4-card.png'),
+  assetUrl('/chery-tiggo-4-card.png'),
+  assetUrl('/chery-tiggo-4-card.png'),
+  assetUrl('/chery-tiggo-4-card.png'),
+];
 
 const cheryTiggoMock: CarDetails = {
   make: 'Chery',
@@ -1132,7 +1197,7 @@ export function getCarDetails(
   const normalizedMake = makeSlug.toLowerCase();
   const normalizedModel = modelSlug.toLowerCase();
   const key = `${normalizedMake}/${normalizedModel}`;
-  const base = carDetailsByKey[key] ?? cheryTiggoMock;
+  const base = carDetailsByKey[key] ?? rav4Mock;
 
   return {
     ...base,

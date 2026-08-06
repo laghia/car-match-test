@@ -18,6 +18,7 @@ type ShortlistCar = {
   fuelType: string;
   engine: string;
   image: string;
+  detailsPath: string;
 };
 
 const shortlistedCars: ShortlistCar[] = [
@@ -33,6 +34,7 @@ const shortlistedCars: ShortlistCar[] = [
     fuelType: 'Plug-In Electric (567km electric range)',
     engine: '230kW automatic RWD',
     image: assetUrl('/compare-byd-sealion-7.png'),
+    detailsPath: `${flowConfig.carDetailsPath}/byd/sealion-7/premium`,
   },
   {
     id: 2,
@@ -46,6 +48,7 @@ const shortlistedCars: ShortlistCar[] = [
     fuelType: 'Petrol',
     engine: '170kW automatic 4X4',
     image: assetUrl('/compare-mazda-cx5.png'),
+    detailsPath: `${flowConfig.carDetailsPath}/mazda/cx-5/akera`,
   },
   {
     id: 3,
@@ -59,6 +62,7 @@ const shortlistedCars: ShortlistCar[] = [
     fuelType: 'Petrol (hybrid electric)',
     engine: '143kW automatic 4X4',
     image: assetUrl('/compare-toyota-rav4.png'),
+    detailsPath: `${flowConfig.carDetailsPath}/toyota/rav4/cruiser`,
   },
 ];
 
@@ -169,7 +173,7 @@ export function ShortlistPage() {
                   </div>
                 </dl>
 
-                <Link to={flowConfig.carDetailsPath} className="shortlist-card__view">
+                <Link to={car.detailsPath} className="shortlist-card__view">
                   <Button variant="secondary" fullWidth>
                     Check costs and details
                   </Button>

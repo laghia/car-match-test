@@ -21,7 +21,7 @@ export function CarDetailsPage() {
   }>();
 
   const car = useMemo(
-    () => getCarDetails(make ?? 'chery', model ?? 'tiggo-4', variantSlug ?? 'ultimate'),
+    () => getCarDetails(make ?? 'toyota', model ?? 'rav4', variantSlug ?? 'cruiser'),
     [make, model, variantSlug],
   );
 
