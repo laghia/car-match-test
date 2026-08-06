@@ -70,6 +70,9 @@
 
 .running-costs__card {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   border: 1px solid var(--border-01);
   border-radius: 8px;
   background: var(--ui-01);
@@ -310,6 +313,69 @@
   width: 100%;
 }
 
+.running-costs__compare-divider {
+  width: 100%;
+  height: 1px;
+  margin: 0;
+  border: 0;
+  background: var(--border-01);
+}
+
+.running-costs__compare {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.running-costs__compare-heading {
+  margin: 0;
+  font-family: var(--family-heading);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0;
+  color: var(--text-03);
+}
+
+.running-costs__compare-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.running-costs__compare-info {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding-right: 8px;
+}
+
+.running-costs__compare-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.running-costs__compare-copy {
+  margin: 0;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 22px;
+  letter-spacing: 0.25px;
+  color: var(--text-nav);
+}
+
+.running-costs__compare-cta {
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
 .running-costs__divider {
   width: 1px;
   background: var(--border-01);
@@ -474,6 +540,23 @@
 }
 
 @media (max-width: 767px) {
+  .running-costs__compare-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .running-costs__compare-info {
+    padding-right: 0;
+  }
+
+  .running-costs__compare-cta {
+    width: 100%;
+  }
+
+  .running-costs__compare-cta .btn {
+    width: 100%;
+  }
+
   .running-costs__actions {
     flex-direction: column;
     align-items: stretch;

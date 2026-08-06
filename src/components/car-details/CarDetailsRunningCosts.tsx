@@ -8,12 +8,14 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { Link } from 'react-router-dom';
 import type { RunningCostsData } from '../../data/content';
 import {
   clearStoredOwnershipCosts,
   getStoredOwnershipCosts,
   setStoredOwnershipCosts,
 } from '../../data/ownershipCostsStore';
+import { flowConfig } from '../../flow/config';
 import { assetUrl } from '../../utils/baseUrl';
 import { Button } from '../Button';
 import { ChevronDownIcon, TooltipIcon } from '../Icons';
@@ -34,6 +36,8 @@ const LINE_ITEM_ICONS: Record<string, string> = {
   battery: assetUrl('/icons/running-costs/battery.png'),
   roadside: assetUrl('/icons/running-costs/roadside.png'),
 };
+
+const COMPARE_SCALE_ICON = assetUrl('/icons/running-costs/compare-scale.svg');
 
 const COST_TOOLTIPS: Record<string, ReactNode> = {
   'car-loan': (
@@ -458,6 +462,32 @@ export function CarDetailsRunningCosts({ data, carKey }: CarDetailsRunningCostsP
                   totalLabel={formatMoney(totalAmount)}
                   periodLabel={viewAs === 'monthly' ? 'per month' : 'per year'}
                 />
+              </div>
+            </div>
+
+            <hr className="running-costs__compare-divider" />
+
+            <div className="running-costs__compare">
+              <p className="running-costs__compare-heading">Looking to compare costs?</p>
+              <div className="running-costs__compare-row">
+                <div className="running-costs__compare-info">
+                  <img
+                    className="running-costs__compare-icon"
+                    src={COMPARE_SCALE_ICON}
+                    alt=""
+                    width={24}
+                    height={24}
+                    aria-hidden="true"
+                  />
+                  <p className="running-costs__compare-copy">
+                    Compare costs of your shortlisted vehicles
+                  </p>
+                </div>
+                <Link to={flowConfig.shortlistPath} className="running-costs__compare-cta">
+                  <Button variant="digital-secondary" size="small">
+                    Go to compare
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

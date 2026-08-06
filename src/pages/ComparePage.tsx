@@ -792,7 +792,7 @@ export function ComparePage() {
 
           <section className="ownership-costs" aria-labelledby="ownership-costs-heading">
             <header className="ownership-costs__header">
-              <h2 id="ownership-costs-heading">Estimated cost of ownership</h2>
+              <h2 id="ownership-costs-heading">Estimated monthly cost of ownership</h2>
               <p>
                 Compare and calculate your indicative costs of owning and running this car in Victoria with RACV
                 products, and based on driving 15,000kms per year,{' '}
