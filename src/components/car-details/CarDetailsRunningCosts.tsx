@@ -9,6 +9,11 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import type { RunningCostsData } from '../../data/content';
+import {
+  clearStoredOwnershipCosts,
+  getStoredOwnershipCosts,
+  setStoredOwnershipCosts,
+} from '../../data/ownershipCostsStore';
 import { assetUrl } from '../../utils/baseUrl';
 import { Button } from '../Button';
 import { ChevronDownIcon, TooltipIcon } from '../Icons';
@@ -17,6 +22,7 @@ import './CarDetailsRunningCosts.css';
 
 type CarDetailsRunningCostsProps = {
   data: RunningCostsData;
+  carKey: string;
 };
 
 const LINE_ITEM_ICONS: Record<string, string> = {
@@ -236,18 +242,18 @@ function DonutChart({
   );
 }
 
-export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
+export function CarDetailsRunningCosts({ data, carKey }: CarDetailsRunningCostsProps) {
   const [viewAs, setViewAs] = useState<'monthly' | 'annual'>('monthly');
   const [isEditPanelOpen, setIsEditPanelOpen] = useState(false);
   const [isCardLoading, setIsCardLoading] = useState(false);
-  const [runningCosts, setRunningCosts] = useState(data);
+  const [runningCosts, setRunningCosts] = useState(() => getStoredOwnershipCosts(carKey) ?? data);
   const loadingTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    setRunningCosts(data);
+    setRunningCosts(getStoredOwnershipCosts(carKey) ?? data);
     setIsEditPanelOpen(false);
     setIsCardLoading(false);
-  }, [data]);
+  }, [data, carKey]);
 
   useEffect(
     () => () => {
@@ -269,10 +275,16 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
 
     loadingTimeoutRef.current = window.setTimeout(() => {
       setRunningCosts(updated);
+      setStoredOwnershipCosts(carKey, updated);
       setIsCardLoading(false);
       setIsEditPanelOpen(false);
       loadingTimeoutRef.current = null;
     }, 700);
+  };
+
+  const handleReset = () => {
+    clearStoredOwnershipCosts(carKey);
+    setRunningCosts(data);
   };
 
   const multiplier = viewAs === 'monthly' ? 1 : 12;
@@ -414,7 +426,7 @@ export function CarDetailsRunningCosts({ data }: CarDetailsRunningCostsProps) {
                   <Button variant="primary" onClick={() => setIsEditPanelOpen(true)}>
                     Customise costs
                   </Button>
-                  <Button variant="secondary" onClick={() => setRunningCosts(data)}>
+                  <Button variant="secondary" onClick={handleReset}>
                     Reset
                   </Button>
                 </div>

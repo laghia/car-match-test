@@ -75,7 +75,10 @@ export function CarDetailsPage() {
 
       <CarDetailsSectionTabs />
 
-      <CarDetailsRunningCosts data={car.runningCosts} />
+      <CarDetailsRunningCosts
+        data={car.runningCosts}
+        carKey={`${car.makeSlug}/${car.modelSlug}`}
+      />
       <CarDetailsExpertReview />
       <CarDetailsVehicleSpecs data={car.vehicleSpecs} />
 

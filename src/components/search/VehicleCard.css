@@ -25,7 +25,7 @@
 .vehicle-card__image-wrap {
   aspect-ratio: 375 / 210.94;
   overflow: hidden;
-  background: var(--ui-01);
+  background: #fff;
 }
 
 .vehicle-card__image-wrap img {

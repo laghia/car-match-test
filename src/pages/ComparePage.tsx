@@ -6,6 +6,13 @@ import {
   ROADSIDE_ASSISTANCE_OPTIONS,
 } from '../components/car-details/roadsideAssistanceOptions';
 import { ANNUAL_KM_BANDS } from '../components/car-details/EditRunningCostsPanel';
+import type { RunningCostsData } from '../data/content';
+import {
+  clearStoredOwnershipCosts,
+  getStoredOwnershipCosts,
+  ownershipCostsKey,
+  setStoredOwnershipCosts,
+} from '../data/ownershipCostsStore';
 import { flowConfig } from '../flow/config';
 import { assetUrl } from '../utils/baseUrl';
 import './ComparePage.css';
@@ -19,6 +26,7 @@ const comparisonCars = [
     driveAway: 'Estimated VIC used car driveaway',
     image: assetUrl('/compare-byd-sealion-7.png'),
     detailsPath: `${flowConfig.carDetailsPath}/byd/sealion-7/premium`,
+    ownershipKey: ownershipCostsKey('byd', 'sealion-7'),
   },
   {
     id: 2,
@@ -28,6 +36,7 @@ const comparisonCars = [
     driveAway: 'Estimated VIC driveaway',
     image: assetUrl('/compare-mazda-cx5.png'),
     detailsPath: `${flowConfig.carDetailsPath}/mazda/cx-5/akera`,
+    ownershipKey: ownershipCostsKey('mazda', 'cx-5'),
   },
   {
     id: 3,
@@ -37,6 +46,7 @@ const comparisonCars = [
     driveAway: 'Estimated VIC driveaway',
     image: assetUrl('/compare-toyota-rav4.png'),
     detailsPath: `${flowConfig.carDetailsPath}/toyota/rav4/cruiser`,
+    ownershipKey: ownershipCostsKey('toyota', 'rav4'),
   },
 ];
 
@@ -216,6 +226,94 @@ function calculateMonthlyLoan(form: CostFormState): number {
 
 function scaleKmCost(baseline: number, annualKm: number): number {
   return Math.round(baseline * (annualKm / BASELINE_ANNUAL_KM));
+}
+
+function getLineItemAmount(data: RunningCostsData, id: string): number {
+  const item = data.lineItems.find((lineItem) => lineItem.id === id);
+  return item ? parseAmount(item.value) : 0;
+}
+
+function ownershipToRunningCosts(
+  costs: CarOwnershipCosts,
+  baseline: RunningCostsData | null,
+): RunningCostsData {
+  const amounts: Record<string, number> = {
+    registration: costs.registration,
+    fuel: costs.fuel,
+    servicing: costs.servicing,
+    battery: costs.battery,
+    roadside: costs.roadside,
+  };
+
+  const defaultItems = [
+    { id: 'registration', label: 'Victorian registration', value: '$0' },
+    { id: 'fuel', label: 'Fuel / electricity', value: '$0' },
+    { id: 'servicing', label: 'Servicing', value: '$0' },
+    { id: 'battery', label: 'Battery', value: '$0' },
+    {
+      id: 'roadside',
+      label: 'RACV Emergency Roadside Assistance',
+      footnote: '#',
+      value: '$0',
+      linkLabel: 'Join now',
+    },
+  ];
+
+  const lineItems = (baseline?.lineItems ?? defaultItems).map((item) =>
+    amounts[item.id] !== undefined ? { ...item, value: formatMoney(amounts[item.id]) } : item,
+  );
+
+  return {
+    loanCost: costs.loan,
+    insuranceCost: costs.insurance,
+    runningCost: lineItems.reduce((sum, item) => sum + parseAmount(item.value), 0),
+    lineItems,
+    customizations: {
+      annualKmBand: costs.form.annualKmBand,
+      hasFinance: costs.form.includeFinance ? 'yes' : 'no',
+      loanAmount: costs.form.loanAmount,
+      interestRate: costs.form.interestRate,
+      loanTerm: costs.form.loanTerm,
+      roadside: costs.form.roadside,
+    },
+  };
+}
+
+function runningCostsToOwnership(
+  data: RunningCostsData,
+  baseline: CarOwnershipCosts,
+): CarOwnershipCosts {
+  const customizations = data.customizations;
+
+  return {
+    loan: Math.round(data.loanCost),
+    insurance: Math.round(data.insuranceCost),
+    registration: getLineItemAmount(data, 'registration'),
+    fuel: getLineItemAmount(data, 'fuel'),
+    servicing: getLineItemAmount(data, 'servicing'),
+    battery: getLineItemAmount(data, 'battery'),
+    roadside: getLineItemAmount(data, 'roadside'),
+    calculated: true,
+    form: {
+      includeFinance: customizations ? customizations.hasFinance === 'yes' : data.loanCost > 0,
+      loanAmount: customizations?.loanAmount ?? baseline.form.loanAmount,
+      interestRate: customizations?.interestRate ?? baseline.form.interestRate,
+      loanTerm: customizations?.loanTerm ?? baseline.form.loanTerm,
+      annualKmBand: customizations?.annualKmBand ?? baseline.form.annualKmBand,
+      applyKmToAll: false,
+      includeRoadside: getLineItemAmount(data, 'roadside') > 0,
+      roadside: customizations?.roadside ?? baseline.form.roadside,
+      applyRoadsideToAll: false,
+      insurance: String(Math.round(data.insuranceCost * 12)),
+    },
+  };
+}
+
+function buildInitialOwnershipCosts(): CarOwnershipCosts[] {
+  return INITIAL_OWNERSHIP.map((baseline, index) => {
+    const stored = getStoredOwnershipCosts(comparisonCars[index].ownershipKey);
+    return stored ? runningCostsToOwnership(stored, baseline) : baseline;
+  });
 }
 
 function applyCostForm(baseline: CarOwnershipCosts, form: CostFormState): CarOwnershipCosts {
@@ -531,14 +629,28 @@ function CalculateCostModal({
 }
 
 export function ComparePage() {
-  const [ownershipCosts, setOwnershipCosts] = useState(INITIAL_OWNERSHIP);
+  const [ownershipCosts, setOwnershipCosts] = useState(buildInitialOwnershipCosts);
   const [activeCostCarIndex, setActiveCostCarIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    setOwnershipCosts(buildInitialOwnershipCosts());
+  }, []);
+
+  const persistOwnership = (index: number, costs: CarOwnershipCosts) => {
+    const key = comparisonCars[index].ownershipKey;
+    if (costs.calculated) {
+      const baselineStored = getStoredOwnershipCosts(key);
+      setStoredOwnershipCosts(key, ownershipToRunningCosts(costs, baselineStored));
+    } else {
+      clearStoredOwnershipCosts(key);
+    }
+  };
 
   const handleOwnershipUpdate = (form: CostFormState) => {
     if (activeCostCarIndex === null) return;
 
-    setOwnershipCosts((current) =>
-      current.map((car, index) => {
+    setOwnershipCosts((current) => {
+      const nextCosts = current.map((car, index) => {
         const baseline = INITIAL_OWNERSHIP[index];
         const isActive = index === activeCostCarIndex;
 
@@ -579,13 +691,22 @@ export function ComparePage() {
         }
 
         return next;
-      }),
-    );
+      });
+
+      nextCosts.forEach((costs, index) => {
+        if (index === activeCostCarIndex || form.applyKmToAll || form.applyRoadsideToAll) {
+          if (costs.calculated) persistOwnership(index, costs);
+        }
+      });
+
+      return nextCosts;
+    });
   };
 
   const handleOwnershipReset = () => {
     if (activeCostCarIndex === null) return;
 
+    clearStoredOwnershipCosts(comparisonCars[activeCostCarIndex].ownershipKey);
     setOwnershipCosts((current) =>
       current.map((car, index) =>
         index === activeCostCarIndex ? { ...INITIAL_OWNERSHIP[index] } : car,

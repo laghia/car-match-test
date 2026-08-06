@@ -838,10 +838,10 @@ const rav4VehicleSpecs: VehicleSpecsData = {
 };
 
 const rav4Images = [
-  assetUrl('/compare-toyota-rav4.png'),
-  assetUrl('/compare-toyota-rav4.png'),
-  assetUrl('/compare-toyota-rav4.png'),
-  assetUrl('/compare-toyota-rav4.png'),
+  assetUrl('/toyota-rav4-cruiser-details.png'),
+  assetUrl('/toyota-rav4-cruiser-details.png'),
+  assetUrl('/toyota-rav4-cruiser-details.png'),
+  assetUrl('/toyota-rav4-cruiser-details.png'),
 ];
 
 const corollaImages = [
