@@ -345,7 +345,7 @@ export function CarDetailsRunningCosts({ data, carKey }: CarDetailsRunningCostsP
             Estimated cost of ownership
           </h2>
           <p className="running-costs__intro">
-          See the estimated costs of owning this car in Victoria**. To learn more, read the{' '}
+          See the indicative costs of owning and running this car in Victoria with RACV products, and based on driving 15,000kms per year**. To learn more, read the{' '}
             <a
               href="https://www.racv.com.au/car-match/car-match-faqs.html#Whatareestimatedrunningcosts"
               target="_blank"
