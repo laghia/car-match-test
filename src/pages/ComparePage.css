@@ -340,6 +340,76 @@
   text-decoration: underline;
 }
 
+.ownership-costs__body {
+  position: relative;
+  width: 100%;
+}
+
+.ownership-costs__scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.ownership-costs__tables {
+  position: relative;
+  width: 100%;
+}
+
+.ownership-costs__column-loading {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(25% * (var(--column-index) + 1));
+  width: 25%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.ownership-costs__column-loading-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: rgba(244, 245, 246, 0.92);
+}
+
+.ownership-costs__spinner {
+  width: 48px;
+  height: 48px;
+  animation: ownership-costs-spinner-rotate 0.9s linear infinite;
+}
+
+.ownership-costs__spinner-track {
+  stroke: #e5e8eb;
+}
+
+.ownership-costs__spinner-arc {
+  stroke: var(--link);
+}
+
+@keyframes ownership-costs-spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ownership-costs__cell--loading {
+  color: transparent;
+}
+
+.ownership-costs__cell--loading strong,
+.ownership-costs__cell--loading button,
+.ownership-costs__cell--loading span,
+.ownership-costs__cell--loading sup {
+  visibility: hidden;
+}
+
+.ownership-costs__monthly button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .ownership-costs__monthly-wrap,
 .ownership-costs__breakdown-wrap {
   width: 100%;
@@ -837,6 +907,10 @@
   }
 
   .compare-overview__table {
+    min-width: 1000px;
+  }
+
+  .ownership-costs__tables {
     min-width: 1000px;
   }
 

@@ -513,6 +513,7 @@ export type RunningCostsData = {
   insuranceCost: number;
   lineItems: RunningCostsLineItem[];
   customizations?: RunningCostsCustomizations;
+  lastCustomisedAt?: string;
 };
 
 export type VehicleSpecRow = {

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useEffect, useId, useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
 import { ChevronRight, CrossIcon, TooltipIcon } from '../components/Icons';
 import {
   getRoadsideMonthlyCost,
@@ -276,6 +276,7 @@ function ownershipToRunningCosts(
       loanTerm: costs.form.loanTerm,
       roadside: costs.form.roadside,
     },
+    lastCustomisedAt: new Date().toISOString(),
   };
 }
 
@@ -360,6 +361,32 @@ function MoneyCell({ amount, annotated = false }: { amount: number; annotated?: 
   }
 
   return <>{formatMoney(amount)}</>;
+}
+
+function OwnershipColumnLoader({ carTitle }: { carTitle: string }) {
+  return (
+    <div
+      className="ownership-costs__column-loading-inner"
+      role="status"
+      aria-live="polite"
+      aria-label={`Updating costs for ${carTitle}`}
+    >
+      <svg className="ownership-costs__spinner" viewBox="0 0 48 48" aria-hidden="true">
+        <circle className="ownership-costs__spinner-track" cx="24" cy="24" r="20" fill="none" strokeWidth="4" />
+        <circle
+          className="ownership-costs__spinner-arc"
+          cx="24"
+          cy="24"
+          r="20"
+          fill="none"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeDasharray="31.4 94.2"
+          transform="rotate(-90 24 24)"
+        />
+      </svg>
+    </div>
+  );
 }
 
 type CalculateCostModalProps = {
@@ -624,10 +651,21 @@ function CalculateCostModal({
 export function ComparePage() {
   const [ownershipCosts, setOwnershipCosts] = useState(buildInitialOwnershipCosts);
   const [activeCostCarIndex, setActiveCostCarIndex] = useState<number | null>(null);
+  const [loadingColumns, setLoadingColumns] = useState<number[]>([]);
+  const loadingTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     setOwnershipCosts(buildInitialOwnershipCosts());
   }, []);
+
+  useEffect(
+    () => () => {
+      if (loadingTimeoutRef.current !== null) {
+        window.clearTimeout(loadingTimeoutRef.current);
+      }
+    },
+    [],
+  );
 
   const persistOwnership = (index: number, costs: CarOwnershipCosts) => {
     const key = comparisonCars[index].ownershipKey;
@@ -639,13 +677,11 @@ export function ComparePage() {
     }
   };
 
-  const handleOwnershipUpdate = (form: CostFormState) => {
-    if (activeCostCarIndex === null) return;
-
+  const applyOwnershipUpdate = (activeIndex: number, form: CostFormState) => {
     setOwnershipCosts((current) => {
       const nextCosts = current.map((car, index) => {
         const baseline = INITIAL_OWNERSHIP[index];
-        const isActive = index === activeCostCarIndex;
+        const isActive = index === activeIndex;
 
         if (isActive) {
           return applyCostForm(baseline, form);
@@ -687,13 +723,34 @@ export function ComparePage() {
       });
 
       nextCosts.forEach((costs, index) => {
-        if (index === activeCostCarIndex || form.applyKmToAll || form.applyRoadsideToAll) {
+        if (index === activeIndex || form.applyKmToAll || form.applyRoadsideToAll) {
           if (costs.calculated) persistOwnership(index, costs);
         }
       });
 
       return nextCosts;
     });
+  };
+
+  const handleOwnershipUpdate = (form: CostFormState) => {
+    if (activeCostCarIndex === null) return;
+
+    const activeIndex = activeCostCarIndex;
+    const columns =
+      form.applyKmToAll || form.applyRoadsideToAll
+        ? comparisonCars.map((_, index) => index)
+        : [activeIndex];
+
+    if (loadingTimeoutRef.current !== null) {
+      window.clearTimeout(loadingTimeoutRef.current);
+    }
+
+    setLoadingColumns(columns);
+    loadingTimeoutRef.current = window.setTimeout(() => {
+      applyOwnershipUpdate(activeIndex, form);
+      setLoadingColumns([]);
+      loadingTimeoutRef.current = null;
+    }, 700);
   };
 
   const handleOwnershipReset = () => {
@@ -717,6 +774,8 @@ export function ComparePage() {
       ),
     );
   };
+
+  const isColumnLoading = (index: number) => loadingColumns.includes(index);
 
   return (
     <div className="compare-page">
@@ -807,90 +866,146 @@ export function ComparePage() {
               </p>
             </header>
 
-            <div className="ownership-costs__monthly-wrap">
-              <table className="ownership-costs__monthly">
-                <tbody>
-                  <tr>
-                    <th scope="row">Estimated monthly costs</th>
-                    {ownershipCosts.map((costs, index) => (
-                      <td key={comparisonCars[index].id}>
-                        <strong>{formatMoney(getMonthlyTotal(costs))}</strong>
-                        <button type="button" onClick={() => setActiveCostCarIndex(index)}>
-                          {costs.calculated ? 'Recalculate cost' : 'Calculate cost'}
-                        </button>
-                      </td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <div className="ownership-costs__body">
+              <div className="ownership-costs__scroll">
+                <div className="ownership-costs__tables">
+                  <table className="ownership-costs__monthly">
+                    <tbody>
+                      <tr>
+                        <th scope="row">Estimated monthly costs</th>
+                        {ownershipCosts.map((costs, index) => (
+                          <td
+                            key={comparisonCars[index].id}
+                            className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
+                            aria-busy={isColumnLoading(index)}
+                          >
+                            <strong>{formatMoney(getMonthlyTotal(costs))}</strong>
+                            <button
+                              type="button"
+                              onClick={() => setActiveCostCarIndex(index)}
+                              disabled={loadingColumns.length > 0}
+                            >
+                              {costs.calculated ? 'Recalculate cost' : 'Calculate cost'}
+                            </button>
+                          </td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
 
-            <div className="ownership-costs__breakdown-wrap">
-              <table className="ownership-costs__breakdown">
-                <tbody>
-                  <tr>
-                    <th scope="row">
-                      <CostLabel tooltip>Car Loan repayment</CostLabel>
-                    </th>
-                    {ownershipCosts.map((costs, index) => (
-                      <td key={`loan-${comparisonCars[index].id}`}>{formatMoney(costs.loan)}</td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      <CostLabel tooltip>Car Insurance***</CostLabel>
-                    </th>
-                    {ownershipCosts.map((costs, index) => (
-                      <td key={`insurance-${comparisonCars[index].id}`}>{formatMoney(costs.insurance)}</td>
-                    ))}
-                  </tr>
-                  <tr className="ownership-costs__row--running">
-                    <th scope="row">
-                      <span className="ownership-costs__running-label">
-                        <strong>Running costs</strong>
-                        <span>Victorian registration</span>
-                      </span>
-                    </th>
-                    {ownershipCosts.map((costs, index) => (
-                      <td key={`registration-${comparisonCars[index].id}`}>
-                        <MoneyCell amount={costs.registration} annotated={index === 0} />
-                      </td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <th scope="row">Fuel</th>
-                    {ownershipCosts.map((costs, index) => (
-                      <td key={`fuel-${comparisonCars[index].id}`}>
-                        <MoneyCell amount={costs.fuel} annotated />
-                      </td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <th scope="row">Servicing</th>
-                    {ownershipCosts.map((costs, index) => (
-                      <td key={`servicing-${comparisonCars[index].id}`}>{formatMoney(costs.servicing)}</td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <th scope="row">Battery</th>
-                    {ownershipCosts.map((costs, index) => (
-                      <td key={`battery-${comparisonCars[index].id}`}>
-                        <MoneyCell amount={costs.battery} annotated />
-                      </td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      <strong>
-                        RACV Roadside Assistance<sup>#</sup>
-                      </strong>
-                    </th>
-                    {ownershipCosts.map((costs, index) => (
-                      <td key={`roadside-${comparisonCars[index].id}`}>{formatMoney(costs.roadside)}</td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
+                  <table className="ownership-costs__breakdown">
+                    <tbody>
+                      <tr>
+                        <th scope="row">
+                          <CostLabel tooltip>Car Loan repayment</CostLabel>
+                        </th>
+                        {ownershipCosts.map((costs, index) => (
+                          <td
+                            key={`loan-${comparisonCars[index].id}`}
+                            className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
+                            aria-busy={isColumnLoading(index)}
+                          >
+                            {formatMoney(costs.loan)}
+                          </td>
+                        ))}
+                      </tr>
+                      <tr>
+                        <th scope="row">
+                          <CostLabel tooltip>Car Insurance***</CostLabel>
+                        </th>
+                        {ownershipCosts.map((costs, index) => (
+                          <td
+                            key={`insurance-${comparisonCars[index].id}`}
+                            className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
+                            aria-busy={isColumnLoading(index)}
+                          >
+                            {formatMoney(costs.insurance)}
+                          </td>
+                        ))}
+                      </tr>
+                      <tr className="ownership-costs__row--running">
+                        <th scope="row">
+                          <span className="ownership-costs__running-label">
+                            <strong>Running costs</strong>
+                            <span>Victorian registration</span>
+                          </span>
+                        </th>
+                        {ownershipCosts.map((costs, index) => (
+                          <td
+                            key={`registration-${comparisonCars[index].id}`}
+                            className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
+                            aria-busy={isColumnLoading(index)}
+                          >
+                            <MoneyCell amount={costs.registration} annotated={index === 0} />
+                          </td>
+                        ))}
+                      </tr>
+                      <tr>
+                        <th scope="row">Fuel</th>
+                        {ownershipCosts.map((costs, index) => (
+                          <td
+                            key={`fuel-${comparisonCars[index].id}`}
+                            className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
+                            aria-busy={isColumnLoading(index)}
+                          >
+                            <MoneyCell amount={costs.fuel} annotated />
+                          </td>
+                        ))}
+                      </tr>
+                      <tr>
+                        <th scope="row">Servicing</th>
+                        {ownershipCosts.map((costs, index) => (
+                          <td
+                            key={`servicing-${comparisonCars[index].id}`}
+                            className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
+                            aria-busy={isColumnLoading(index)}
+                          >
+                            {formatMoney(costs.servicing)}
+                          </td>
+                        ))}
+                      </tr>
+                      <tr>
+                        <th scope="row">Battery</th>
+                        {ownershipCosts.map((costs, index) => (
+                          <td
+                            key={`battery-${comparisonCars[index].id}`}
+                            className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
+                            aria-busy={isColumnLoading(index)}
+                          >
+                            <MoneyCell amount={costs.battery} annotated />
+                          </td>
+                        ))}
+                      </tr>
+                      <tr>
+                        <th scope="row">
+                          <strong>
+                            RACV Roadside Assistance<sup>#</sup>
+                          </strong>
+                        </th>
+                        {ownershipCosts.map((costs, index) => (
+                          <td
+                            key={`roadside-${comparisonCars[index].id}`}
+                            className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
+                            aria-busy={isColumnLoading(index)}
+                          >
+                            {formatMoney(costs.roadside)}
+                          </td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  {loadingColumns.map((index) => (
+                    <div
+                      key={`loading-${comparisonCars[index].id}`}
+                      className="ownership-costs__column-loading"
+                      style={{ '--column-index': index } as CSSProperties}
+                    >
+                      <OwnershipColumnLoader carTitle={comparisonCars[index].title} />
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </section>
         </div>

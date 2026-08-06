@@ -220,6 +220,7 @@ export function applyFormToRunningCosts(
       loanTerm: form.loanTerm,
       roadside: form.roadside,
     },
+    lastCustomisedAt: new Date().toISOString(),
   };
 }
 

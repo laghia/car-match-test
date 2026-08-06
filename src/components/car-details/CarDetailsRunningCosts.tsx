@@ -38,6 +38,25 @@ const LINE_ITEM_ICONS: Record<string, string> = {
 };
 
 const COMPARE_SCALE_ICON = assetUrl('/icons/running-costs/compare-scale.svg');
+const INFO_CIRCLE_ICON = assetUrl('/icons/running-costs/info-circle-outline.svg');
+
+function formatLastCustomised(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return '';
+
+  const datePart = date.toLocaleDateString('en-AU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+  const timePart = date.toLocaleTimeString('en-AU', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+
+  return `${datePart} ${timePart}`;
+}
 
 const COST_TOOLTIPS: Record<string, ReactNode> = {
   'car-loan': (
@@ -310,6 +329,9 @@ export function CarDetailsRunningCosts({ data, carKey }: CarDetailsRunningCostsP
   const insuranceAmount = runningCosts.insuranceCost;
   const totalAmount = ownershipAmount + runningAmount + insuranceAmount;
   const showTooltips = !runningCosts.customizations;
+  const lastCustomisedLabel = runningCosts.lastCustomisedAt
+    ? formatLastCustomised(runningCosts.lastCustomisedAt)
+    : '';
 
   return (
     <section
@@ -335,10 +357,25 @@ export function CarDetailsRunningCosts({ data, carKey }: CarDetailsRunningCostsP
           </p>
 
           <div
-            className={`running-costs__card${isCardLoading ? ' running-costs__card--loading' : ''}`}
+            className={`running-costs__card${isCardLoading ? ' running-costs__card--loading' : ''}${
+              lastCustomisedLabel ? ' running-costs__card--customised' : ''
+            }`}
             aria-busy={isCardLoading}
           >
             {isCardLoading && <RunningCostsCardLoader />}
+            {lastCustomisedLabel && (
+              <div className="running-costs__customised-tag">
+                <img
+                  className="running-costs__customised-icon"
+                  src={INFO_CIRCLE_ICON}
+                  alt=""
+                  width={16}
+                  height={16}
+                  aria-hidden="true"
+                />
+                <span>Last customised: {lastCustomisedLabel}</span>
+              </div>
+            )}
             <div className="running-costs__card-body">
               <div className="running-costs__list-col">
                 <div className="running-costs__list">
