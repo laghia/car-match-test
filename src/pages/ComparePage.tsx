@@ -406,19 +406,34 @@ function CalculateCostModal({
 }: CalculateCostModalProps) {
   const titleId = useId();
   const [form, setForm] = useState<CostFormState>(initialForm);
+  const lockedScrollYRef = useRef(0);
 
   useEffect(() => {
     const scrollY = window.scrollY;
-    const { body } = document;
+    lockedScrollYRef.current = scrollY;
+    const { body, documentElement } = document;
     const previousOverflow = body.style.overflow;
     const previousPosition = body.style.position;
     const previousTop = body.style.top;
     const previousWidth = body.style.width;
+    const previousScrollBehavior = documentElement.style.scrollBehavior;
 
     body.style.overflow = 'hidden';
     body.style.position = 'fixed';
     body.style.top = `-${scrollY}px`;
     body.style.width = '100%';
+
+    const restoreScroll = () => {
+      documentElement.style.scrollBehavior = 'auto';
+      body.style.overflow = previousOverflow;
+      body.style.position = previousPosition;
+      body.style.top = previousTop;
+      body.style.width = previousWidth;
+      documentElement.scrollTop = scrollY;
+      body.scrollTop = scrollY;
+      window.scrollTo(0, scrollY);
+      documentElement.style.scrollBehavior = previousScrollBehavior;
+    };
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
@@ -426,12 +441,8 @@ function CalculateCostModal({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
-      body.style.overflow = previousOverflow;
-      body.style.position = previousPosition;
-      body.style.top = previousTop;
-      body.style.width = previousWidth;
-      window.scrollTo({ top: scrollY, left: 0, behavior: 'auto' });
       window.removeEventListener('keydown', handleKeyDown);
+      restoreScroll();
     };
     // Lock scroll for the lifetime of the modal only.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- onClose is stable enough for Escape handling
@@ -453,8 +464,25 @@ function CalculateCostModal({
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
+    const scrollY = lockedScrollYRef.current;
+
+    // Prevent the browser scrolling to refocus the opener after the modal unmounts.
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
     onUpdate(form);
     onClose();
+
+    requestAnimationFrame(() => {
+      const { documentElement, body } = document;
+      const previousScrollBehavior = documentElement.style.scrollBehavior;
+      documentElement.style.scrollBehavior = 'auto';
+      documentElement.scrollTop = scrollY;
+      body.scrollTop = scrollY;
+      window.scrollTo(0, scrollY);
+      documentElement.style.scrollBehavior = previousScrollBehavior;
+    });
   };
 
   return (
@@ -678,7 +706,9 @@ export function ComparePage() {
   const [ownershipCosts, setOwnershipCosts] = useState(buildInitialOwnershipCosts);
   const [activeCostCarIndex, setActiveCostCarIndex] = useState<number | null>(null);
   const [loadingColumns, setLoadingColumns] = useState<number[]>([]);
+  const [stickyHeaderVisible, setStickyHeaderVisible] = useState(false);
   const loadingTimeoutRef = useRef<number | null>(null);
+  const cardGridRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     setOwnershipCosts(buildInitialOwnershipCosts());
@@ -692,6 +722,30 @@ export function ComparePage() {
     },
     [],
   );
+
+  useEffect(() => {
+    const cardGrid = cardGridRef.current;
+    if (!cardGrid) return undefined;
+
+    const headerHeight = Number.parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue('--header-height'),
+    ) || 98;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const scrolledPast =
+          !entry.isIntersecting && entry.boundingClientRect.bottom <= headerHeight;
+        setStickyHeaderVisible(scrolledPast);
+      },
+      {
+        threshold: [0, 1],
+        rootMargin: `-${headerHeight}px 0px 0px 0px`,
+      },
+    );
+
+    observer.observe(cardGrid);
+    return () => observer.disconnect();
+  }, []);
 
   const persistOwnership = (index: number, costs: CarOwnershipCosts) => {
     const key = comparisonCars[index].ownershipKey;
@@ -815,6 +869,29 @@ export function ComparePage() {
         <span>Compare cars</span>
       </nav>
 
+      {stickyHeaderVisible && (
+        <div className="compare-sticky-header" aria-hidden="true">
+          <div className="compare-sticky-header__inner">
+            <div className="compare-sticky-header__spacer" />
+            {comparisonCars.map((car, index) => (
+              <div
+                key={car.id}
+                className={`compare-sticky-header__car${index > 0 ? ' compare-sticky-header__car--divided' : ''}`}
+              >
+                <div className="compare-sticky-header__text">
+                  <p className="compare-sticky-header__title">{car.title}</p>
+                  <p className="compare-sticky-header__trim">{car.variant}</p>
+                </div>
+                <p className="compare-sticky-header__price">
+                  {car.price}
+                  <sup>*</sup>
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="compare-page__container">
         <header className="compare-page__title">
           <h1>Compare cars</h1>
@@ -824,7 +901,11 @@ export function ComparePage() {
         <div className="compare-page__separator" />
 
         <div className="compare-page__table">
-          <section className="compare-page__card-grid" aria-label="Cars being compared">
+          <section
+            ref={cardGridRef}
+            className="compare-page__card-grid"
+            aria-label="Cars being compared"
+          >
             <div className="compare-page__row-heading" aria-hidden="true" />
             {comparisonCars.map((car) => (
               <article key={car.id} className="compare-card">
