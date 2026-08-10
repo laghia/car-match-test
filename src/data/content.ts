@@ -612,7 +612,7 @@ const rav4RunningCosts: RunningCostsData = {
     },
     {
       id: 'fuel',
-      label: 'Fuel / electricity',
+      label: 'Fuel',
       value: '$52',
       valueFootnote: '^',
     },
@@ -858,7 +858,7 @@ const corollaRunningCosts: RunningCostsData = {
   insuranceCost: 195,
   lineItems: [
     { id: 'registration', label: 'Victorian registration', value: '$72' },
-    { id: 'fuel', label: 'Fuel / electricity', value: '$98' },
+    { id: 'fuel', label: 'Fuel', value: '$98' },
     { id: 'servicing', label: 'Servicing', value: '$42' },
     { id: 'tyres', label: 'Tyres', value: '$28' },
     { id: 'battery', label: 'Battery', value: '$9' },

@@ -27,6 +27,7 @@ const comparisonCars = [
     image: assetUrl('/compare-byd-sealion-7.png'),
     detailsPath: `${flowConfig.carDetailsPath}/byd/sealion-7/premium`,
     ownershipKey: ownershipCostsKey('byd', 'sealion-7'),
+    fuelType: 'electric' as const,
   },
   {
     id: 2,
@@ -37,6 +38,7 @@ const comparisonCars = [
     image: assetUrl('/compare-mazda-cx5.png'),
     detailsPath: `${flowConfig.carDetailsPath}/mazda/cx-5/akera`,
     ownershipKey: ownershipCostsKey('mazda', 'cx-5'),
+    fuelType: 'petrol' as const,
   },
   {
     id: 3,
@@ -47,6 +49,7 @@ const comparisonCars = [
     image: assetUrl('/compare-toyota-rav4.png'),
     detailsPath: `${flowConfig.carDetailsPath}/toyota/rav4/cruiser`,
     ownershipKey: ownershipCostsKey('toyota', 'rav4'),
+    fuelType: 'hybrid' as const,
   },
 ];
 
@@ -126,6 +129,7 @@ type CarOwnershipCosts = {
   insurance: number;
   registration: number;
   fuel: number;
+  electricity: number;
   servicing: number;
   battery: number;
   roadside: number;
@@ -154,11 +158,12 @@ const INITIAL_OWNERSHIP: CarOwnershipCosts[] = [
     loan: 1183,
     insurance: 69,
     registration: 65,
-    fuel: 48,
+    fuel: 0,
+    electricity: 48,
     servicing: 30,
     battery: 8,
     roadside: 20,
-    calculated: true,
+    calculated: false,
     form: { ...DEFAULT_FORM, insurance: '828' },
   },
   {
@@ -166,6 +171,7 @@ const INITIAL_OWNERSHIP: CarOwnershipCosts[] = [
     insurance: 78,
     registration: 193,
     fuel: 40,
+    electricity: 0,
     servicing: 22,
     battery: 8,
     roadside: 20,
@@ -177,6 +183,7 @@ const INITIAL_OWNERSHIP: CarOwnershipCosts[] = [
     insurance: 78,
     registration: 117,
     fuel: 52,
+    electricity: 0,
     servicing: 34,
     battery: 7,
     roadside: 20,
@@ -199,6 +206,7 @@ function getMonthlyTotal(costs: CarOwnershipCosts): number {
     costs.insurance +
     costs.registration +
     costs.fuel +
+    costs.electricity +
     costs.servicing +
     costs.battery +
     costs.roadside
@@ -236,10 +244,12 @@ function getLineItemAmount(data: RunningCostsData, id: string): number {
 function ownershipToRunningCosts(
   costs: CarOwnershipCosts,
   baseline: RunningCostsData | null,
+  fuelType: (typeof comparisonCars)[number]['fuelType'],
 ): RunningCostsData {
+  const energyCost = fuelType === 'electric' ? costs.electricity : costs.fuel;
   const amounts: Record<string, number> = {
     registration: costs.registration,
-    fuel: costs.fuel,
+    fuel: energyCost,
     servicing: costs.servicing,
     battery: costs.battery,
     roadside: costs.roadside,
@@ -283,14 +293,17 @@ function ownershipToRunningCosts(
 function runningCostsToOwnership(
   data: RunningCostsData,
   baseline: CarOwnershipCosts,
+  fuelType: (typeof comparisonCars)[number]['fuelType'],
 ): CarOwnershipCosts {
   const customizations = data.customizations;
+  const energyCost = getLineItemAmount(data, 'fuel');
 
   return {
     loan: Math.round(data.loanCost),
     insurance: Math.round(data.insuranceCost),
     registration: getLineItemAmount(data, 'registration'),
-    fuel: getLineItemAmount(data, 'fuel'),
+    fuel: fuelType === 'electric' ? 0 : energyCost,
+    electricity: fuelType === 'electric' ? energyCost : 0,
     servicing: getLineItemAmount(data, 'servicing'),
     battery: getLineItemAmount(data, 'battery'),
     roadside: getLineItemAmount(data, 'roadside'),
@@ -313,12 +326,20 @@ function runningCostsToOwnership(
 function buildInitialOwnershipCosts(): CarOwnershipCosts[] {
   return INITIAL_OWNERSHIP.map((baseline, index) => {
     const stored = getStoredOwnershipCosts(comparisonCars[index].ownershipKey);
-    return stored ? runningCostsToOwnership(stored, baseline) : baseline;
+    return stored
+      ? runningCostsToOwnership(stored, baseline, comparisonCars[index].fuelType)
+      : baseline;
   });
 }
 
-function applyCostForm(baseline: CarOwnershipCosts, form: CostFormState): CarOwnershipCosts {
+function applyCostForm(
+  baseline: CarOwnershipCosts,
+  form: CostFormState,
+  fuelType: (typeof comparisonCars)[number]['fuelType'],
+): CarOwnershipCosts {
   const { annualKm } = getKmBand(form.annualKmBand);
+  const scaledFuel = scaleKmCost(baseline.fuel, annualKm);
+  const scaledElectricity = scaleKmCost(baseline.electricity, annualKm);
 
   return {
     // Finance section → Car Loan repayment
@@ -327,7 +348,8 @@ function applyCostForm(baseline: CarOwnershipCosts, form: CostFormState): CarOwn
     insurance: Math.round(parseAmount(form.insurance) / 12),
     // Annual km section → Running costs
     registration: scaleKmCost(baseline.registration, annualKm),
-    fuel: scaleKmCost(baseline.fuel, annualKm),
+    fuel: fuelType === 'electric' ? 0 : scaledFuel,
+    electricity: fuelType === 'electric' ? scaledElectricity : 0,
     servicing: scaleKmCost(baseline.servicing, annualKm),
     battery: scaleKmCost(baseline.battery, annualKm),
     // Roadside section → RACV Roadside Assistance
@@ -751,7 +773,10 @@ export function ComparePage() {
     const key = comparisonCars[index].ownershipKey;
     if (costs.calculated) {
       const baselineStored = getStoredOwnershipCosts(key);
-      setStoredOwnershipCosts(key, ownershipToRunningCosts(costs, baselineStored));
+      setStoredOwnershipCosts(
+        key,
+        ownershipToRunningCosts(costs, baselineStored, comparisonCars[index].fuelType),
+      );
     } else {
       clearStoredOwnershipCosts(key);
     }
@@ -764,7 +789,7 @@ export function ComparePage() {
         const isActive = index === activeIndex;
 
         if (isActive) {
-          return applyCostForm(baseline, form);
+          return applyCostForm(baseline, form, comparisonCars[index].fuelType);
         }
 
         let next = car;
@@ -773,10 +798,14 @@ export function ComparePage() {
         if (form.applyKmToAll) {
           nextForm = { ...nextForm, annualKmBand: form.annualKmBand, applyKmToAll: true };
           const { annualKm } = getKmBand(form.annualKmBand);
+          const fuelType = comparisonCars[index].fuelType;
+          const scaledFuel = scaleKmCost(baseline.fuel, annualKm);
+          const scaledElectricity = scaleKmCost(baseline.electricity, annualKm);
           next = {
             ...next,
             registration: scaleKmCost(baseline.registration, annualKm),
-            fuel: scaleKmCost(baseline.fuel, annualKm),
+            fuel: fuelType === 'electric' ? 0 : scaledFuel,
+            electricity: fuelType === 'electric' ? scaledElectricity : 0,
             servicing: scaleKmCost(baseline.servicing, annualKm),
             battery: scaleKmCost(baseline.battery, annualKm),
             form: nextForm,
@@ -842,7 +871,6 @@ export function ComparePage() {
         index === activeCostCarIndex
           ? {
               ...INITIAL_OWNERSHIP[index],
-              calculated: false,
               form: {
                 ...INITIAL_OWNERSHIP[index].form,
                 annualKmBand: '10000-15000',
@@ -1055,7 +1083,27 @@ export function ComparePage() {
                             className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
                             aria-busy={isColumnLoading(index)}
                           >
-                            <MoneyCell amount={costs.fuel} annotated />
+                            {comparisonCars[index].fuelType === 'electric' ? (
+                              '-'
+                            ) : (
+                              <MoneyCell amount={costs.fuel} annotated />
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                      <tr>
+                        <th scope="row">Electricity</th>
+                        {ownershipCosts.map((costs, index) => (
+                          <td
+                            key={`electricity-${comparisonCars[index].id}`}
+                            className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
+                            aria-busy={isColumnLoading(index)}
+                          >
+                            {comparisonCars[index].fuelType === 'electric' ? (
+                              <MoneyCell amount={costs.electricity} annotated />
+                            ) : (
+                              '-'
+                            )}
                           </td>
                         ))}
                       </tr>

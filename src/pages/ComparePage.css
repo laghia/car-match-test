@@ -587,6 +587,10 @@
   gap: 8px;
 }
 
+.ownership-costs__label > span:first-child {
+  font-weight: 600;
+}
+
 .ownership-costs__tooltip {
   display: inline-flex;
   flex-shrink: 0;
@@ -611,10 +615,6 @@
 .ownership-costs__row--running td {
   padding-top: 44px;
   font-weight: 400;
-}
-
-.ownership-costs__row--running td:first-of-type {
-  font-weight: 600;
 }
 
 .ownership-costs__running-label {
