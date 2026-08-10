@@ -866,7 +866,7 @@ export function ComparePage() {
         <span aria-hidden="true">/</span>
         <Link to={flowConfig.shortlistPath}>Shortlist cars</Link>
         <span aria-hidden="true">/</span>
-        <span>Compare cars</span>
+        <span>Compare specs and costs</span>
       </nav>
 
       {stickyHeaderVisible && (
@@ -894,7 +894,7 @@ export function ComparePage() {
 
       <div className="compare-page__container">
         <header className="compare-page__title">
-          <h1>Compare cars</h1>
+          <h1>Compare specs and costs</h1>
           <p>Compare pricing, specs, features and ratings for up to three cars from your shortlist.</p>
         </header>
 
