@@ -6,6 +6,11 @@ import {
   ROADSIDE_ASSISTANCE_OPTIONS,
 } from '../components/car-details/roadsideAssistanceOptions';
 import { ANNUAL_KM_BANDS } from '../components/car-details/EditRunningCostsPanel';
+import {
+  COMPREHENSIVE_INSURANCE_AVERAGE_TOOLTIP,
+  getCompareInsuranceAverageAnnual,
+  getCompareInsuranceAverageMonthly,
+} from '../data/compareInsuranceAverages';
 import type { RunningCostsData } from '../data/content';
 import {
   clearStoredOwnershipCosts,
@@ -131,6 +136,7 @@ type CarOwnershipCosts = {
   fuel: number;
   electricity: number;
   servicing: number;
+  tyres: number;
   battery: number;
   roadside: number;
   calculated: boolean;
@@ -156,39 +162,51 @@ const DEFAULT_FORM: CostFormState = {
 const INITIAL_OWNERSHIP: CarOwnershipCosts[] = [
   {
     loan: 1183,
-    insurance: 69,
-    registration: 65,
+    insurance: getCompareInsuranceAverageMonthly(comparisonCars[0].ownershipKey),
+    registration: 69,
     fuel: 0,
-    electricity: 48,
-    servicing: 30,
+    electricity: 65,
+    servicing: 48,
+    tyres: 30,
     battery: 8,
     roadside: 20,
     calculated: false,
-    form: { ...DEFAULT_FORM, insurance: '828' },
+    form: {
+      ...DEFAULT_FORM,
+      insurance: getCompareInsuranceAverageAnnual(comparisonCars[0].ownershipKey),
+    },
   },
   {
     loan: 1172,
-    insurance: 78,
-    registration: 193,
-    fuel: 40,
+    insurance: getCompareInsuranceAverageMonthly(comparisonCars[1].ownershipKey),
+    registration: 78,
+    fuel: 193,
     electricity: 0,
-    servicing: 22,
+    servicing: 40,
+    tyres: 22,
     battery: 8,
     roadside: 20,
     calculated: false,
-    form: { ...DEFAULT_FORM, insurance: '936' },
+    form: {
+      ...DEFAULT_FORM,
+      insurance: getCompareInsuranceAverageAnnual(comparisonCars[1].ownershipKey),
+    },
   },
   {
     loan: 1311,
-    insurance: 78,
-    registration: 117,
-    fuel: 52,
+    insurance: getCompareInsuranceAverageMonthly(comparisonCars[2].ownershipKey),
+    registration: 78,
+    fuel: 117,
     electricity: 0,
-    servicing: 34,
+    servicing: 52,
+    tyres: 34,
     battery: 7,
     roadside: 20,
     calculated: false,
-    form: { ...DEFAULT_FORM, insurance: '936' },
+    form: {
+      ...DEFAULT_FORM,
+      insurance: getCompareInsuranceAverageAnnual(comparisonCars[2].ownershipKey),
+    },
   },
 ];
 
@@ -208,6 +226,7 @@ function getMonthlyTotal(costs: CarOwnershipCosts): number {
     costs.fuel +
     costs.electricity +
     costs.servicing +
+    costs.tyres +
     costs.battery +
     costs.roadside
   );
@@ -251,6 +270,7 @@ function ownershipToRunningCosts(
     registration: costs.registration,
     fuel: energyCost,
     servicing: costs.servicing,
+    tyres: costs.tyres,
     battery: costs.battery,
     roadside: costs.roadside,
   };
@@ -259,6 +279,7 @@ function ownershipToRunningCosts(
     { id: 'registration', label: 'Victorian registration', value: '$0' },
     { id: 'fuel', label: 'Fuel / electricity', value: '$0' },
     { id: 'servicing', label: 'Servicing', value: '$0' },
+    { id: 'tyres', label: 'Tyres', value: '$0' },
     { id: 'battery', label: 'Battery', value: '$0' },
     {
       id: 'roadside',
@@ -305,6 +326,7 @@ function runningCostsToOwnership(
     fuel: fuelType === 'electric' ? 0 : energyCost,
     electricity: fuelType === 'electric' ? energyCost : 0,
     servicing: getLineItemAmount(data, 'servicing'),
+    tyres: getLineItemAmount(data, 'tyres'),
     battery: getLineItemAmount(data, 'battery'),
     roadside: getLineItemAmount(data, 'roadside'),
     calculated: true,
@@ -351,6 +373,7 @@ function applyCostForm(
     fuel: fuelType === 'electric' ? 0 : scaledFuel,
     electricity: fuelType === 'electric' ? scaledElectricity : 0,
     servicing: scaleKmCost(baseline.servicing, annualKm),
+    tyres: scaleKmCost(baseline.tyres, annualKm),
     battery: scaleKmCost(baseline.battery, annualKm),
     // Roadside section → RACV Roadside Assistance
     roadside: form.includeRoadside ? Math.round(getRoadsideMonthlyCost(form.roadside)) : 0,
@@ -359,12 +382,24 @@ function applyCostForm(
   };
 }
 
-function CostLabel({ children, tooltip = false }: { children: ReactNode; tooltip?: boolean }) {
+function CostLabel({
+  children,
+  tooltip = false,
+  tooltipText,
+}: {
+  children: ReactNode;
+  tooltip?: boolean;
+  tooltipText?: string;
+}) {
   return (
     <span className="ownership-costs__label">
       <span>{children}</span>
       {tooltip && (
-        <span className="ownership-costs__tooltip" aria-label={`About ${children}`}>
+        <span
+          className="ownership-costs__tooltip"
+          aria-label={tooltipText ?? `About ${children}`}
+          title={tooltipText}
+        >
           <TooltipIcon />
         </span>
       )}
@@ -807,6 +842,7 @@ export function ComparePage() {
             fuel: fuelType === 'electric' ? 0 : scaledFuel,
             electricity: fuelType === 'electric' ? scaledElectricity : 0,
             servicing: scaleKmCost(baseline.servicing, annualKm),
+            tyres: scaleKmCost(baseline.tyres, annualKm),
             battery: scaleKmCost(baseline.battery, annualKm),
             form: nextForm,
             calculated: true,
@@ -1046,7 +1082,9 @@ export function ComparePage() {
                       </tr>
                       <tr>
                         <th scope="row">
-                          <CostLabel tooltip>Car Insurance***</CostLabel>
+                          <CostLabel tooltip tooltipText={COMPREHENSIVE_INSURANCE_AVERAGE_TOOLTIP}>
+                            Car Insurance***
+                          </CostLabel>
                         </th>
                         {ownershipCosts.map((costs, index) => (
                           <td
@@ -1115,7 +1153,19 @@ export function ComparePage() {
                             className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
                             aria-busy={isColumnLoading(index)}
                           >
-                            {formatMoney(costs.servicing)}
+                            <MoneyCell amount={costs.servicing} annotated />
+                          </td>
+                        ))}
+                      </tr>
+                      <tr>
+                        <th scope="row">Tyres</th>
+                        {ownershipCosts.map((costs, index) => (
+                          <td
+                            key={`tyres-${comparisonCars[index].id}`}
+                            className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
+                            aria-busy={isColumnLoading(index)}
+                          >
+                            {formatMoney(costs.tyres)}
                           </td>
                         ))}
                       </tr>
