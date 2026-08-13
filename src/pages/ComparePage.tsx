@@ -150,7 +150,7 @@ const DEFAULT_FORM: CostFormState = {
   includeFinance: true,
   loanAmount: '25000',
   interestRate: '7',
-  loanTerm: '1',
+  loanTerm: '5',
   annualKmBand: '10000-15000',
   applyKmToAll: false,
   includeRoadside: true,
@@ -159,9 +159,8 @@ const DEFAULT_FORM: CostFormState = {
   insurance: '2105',
 };
 
-const INITIAL_OWNERSHIP: CarOwnershipCosts[] = [
+const INITIAL_OWNERSHIP_BASE: Omit<CarOwnershipCosts, 'loan' | 'form'>[] = [
   {
-    loan: 1183,
     insurance: getCompareInsuranceAverageMonthly(comparisonCars[0].ownershipKey),
     registration: 69,
     fuel: 0,
@@ -171,13 +170,8 @@ const INITIAL_OWNERSHIP: CarOwnershipCosts[] = [
     battery: 8,
     roadside: 20,
     calculated: false,
-    form: {
-      ...DEFAULT_FORM,
-      insurance: getCompareInsuranceAverageAnnual(comparisonCars[0].ownershipKey),
-    },
   },
   {
-    loan: 1172,
     insurance: getCompareInsuranceAverageMonthly(comparisonCars[1].ownershipKey),
     registration: 78,
     fuel: 193,
@@ -187,13 +181,8 @@ const INITIAL_OWNERSHIP: CarOwnershipCosts[] = [
     battery: 8,
     roadside: 20,
     calculated: false,
-    form: {
-      ...DEFAULT_FORM,
-      insurance: getCompareInsuranceAverageAnnual(comparisonCars[1].ownershipKey),
-    },
   },
   {
-    loan: 1311,
     insurance: getCompareInsuranceAverageMonthly(comparisonCars[2].ownershipKey),
     registration: 78,
     fuel: 117,
@@ -203,15 +192,23 @@ const INITIAL_OWNERSHIP: CarOwnershipCosts[] = [
     battery: 7,
     roadside: 20,
     calculated: false,
-    form: {
-      ...DEFAULT_FORM,
-      insurance: getCompareInsuranceAverageAnnual(comparisonCars[2].ownershipKey),
-    },
   },
 ];
 
 function parseAmount(value: string): number {
   return Number.parseFloat(value.replace(/[$,%\s,]/g, '')) || 0;
+}
+
+function getVehicleLoanAmount(price: string): string {
+  return String(parseAmount(price));
+}
+
+function createDefaultCostForm(car: (typeof comparisonCars)[number]): CostFormState {
+  return {
+    ...DEFAULT_FORM,
+    loanAmount: getVehicleLoanAmount(car.price),
+    insurance: getCompareInsuranceAverageAnnual(car.ownershipKey),
+  };
 }
 
 function formatMoney(amount: number): string {
@@ -251,6 +248,14 @@ function calculateMonthlyLoan(form: CostFormState): number {
   return Math.round((principal * monthlyRate * factor) / (factor - 1));
 }
 
+const INITIAL_LOAN_COSTS = [1183, 1172, 1311];
+
+const INITIAL_OWNERSHIP: CarOwnershipCosts[] = comparisonCars.map((car, index) => ({
+  ...INITIAL_OWNERSHIP_BASE[index],
+  loan: INITIAL_LOAN_COSTS[index],
+  form: createDefaultCostForm(car),
+}));
+
 function scaleKmCost(baseline: number, annualKm: number): number {
   return Math.round(baseline * (annualKm / BASELINE_ANNUAL_KM));
 }
@@ -284,7 +289,6 @@ function ownershipToRunningCosts(
     {
       id: 'roadside',
       label: 'RACV Emergency Roadside Assistance',
-      footnote: '#',
       value: '$0',
       linkLabel: 'Join now',
     },
@@ -332,7 +336,10 @@ function runningCostsToOwnership(
     calculated: true,
     form: {
       includeFinance: customizations ? customizations.hasFinance === 'yes' : data.loanCost > 0,
-      loanAmount: customizations?.loanAmount ?? baseline.form.loanAmount,
+      loanAmount:
+        customizations?.loanAmount && customizations.loanAmount !== '25000'
+          ? customizations.loanAmount
+          : baseline.form.loanAmount,
       interestRate: customizations?.interestRate ?? baseline.form.interestRate,
       loanTerm: customizations?.loanTerm ?? baseline.form.loanTerm,
       annualKmBand: customizations?.annualKmBand ?? baseline.form.annualKmBand,
@@ -348,9 +355,17 @@ function runningCostsToOwnership(
 function buildInitialOwnershipCosts(): CarOwnershipCosts[] {
   return INITIAL_OWNERSHIP.map((baseline, index) => {
     const stored = getStoredOwnershipCosts(comparisonCars[index].ownershipKey);
-    return stored
-      ? runningCostsToOwnership(stored, baseline, comparisonCars[index].fuelType)
-      : baseline;
+    if (!stored) return baseline;
+
+    const restored = runningCostsToOwnership(stored, baseline, comparisonCars[index].fuelType);
+    if (stored.customizations?.loanAmount === '25000') {
+      return {
+        ...restored,
+        loan: calculateMonthlyLoan(restored.form),
+      };
+    }
+
+    return restored;
   });
 }
 
@@ -407,16 +422,7 @@ function CostLabel({
   );
 }
 
-function MoneyCell({ amount, annotated = false }: { amount: number; annotated?: boolean }) {
-  if (annotated) {
-    return (
-      <span>
-        {formatMoney(amount)}
-        <sup>^</sup>
-      </span>
-    );
-  }
-
+function MoneyCell({ amount }: { amount: number }) {
   return <>{formatMoney(amount)}</>;
 }
 
@@ -1109,7 +1115,7 @@ export function ComparePage() {
                             className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
                             aria-busy={isColumnLoading(index)}
                           >
-                            <MoneyCell amount={costs.registration} annotated={index === 0} />
+                            <MoneyCell amount={costs.registration} />
                           </td>
                         ))}
                       </tr>
@@ -1124,7 +1130,7 @@ export function ComparePage() {
                             {comparisonCars[index].fuelType === 'electric' ? (
                               '-'
                             ) : (
-                              <MoneyCell amount={costs.fuel} annotated />
+                              <MoneyCell amount={costs.fuel} />
                             )}
                           </td>
                         ))}
@@ -1138,7 +1144,7 @@ export function ComparePage() {
                             aria-busy={isColumnLoading(index)}
                           >
                             {comparisonCars[index].fuelType === 'electric' ? (
-                              <MoneyCell amount={costs.electricity} annotated />
+                              <MoneyCell amount={costs.electricity} />
                             ) : (
                               '-'
                             )}
@@ -1153,7 +1159,7 @@ export function ComparePage() {
                             className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
                             aria-busy={isColumnLoading(index)}
                           >
-                            <MoneyCell amount={costs.servicing} annotated />
+                            <MoneyCell amount={costs.servicing} />
                           </td>
                         ))}
                       </tr>
@@ -1177,14 +1183,14 @@ export function ComparePage() {
                             className={isColumnLoading(index) ? 'ownership-costs__cell--loading' : undefined}
                             aria-busy={isColumnLoading(index)}
                           >
-                            <MoneyCell amount={costs.battery} annotated />
+                            <MoneyCell amount={costs.battery} />
                           </td>
                         ))}
                       </tr>
                       <tr>
                         <th scope="row">
                           <strong>
-                            RACV Roadside Assistance<sup>#</sup>
+                            RACV Roadside Assistance
                           </strong>
                         </th>
                         {ownershipCosts.map((costs, index) => (
